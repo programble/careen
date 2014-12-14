@@ -1,0 +1,36 @@
+{
+  "name": "careen",
+  "version": "0.0.0",
+  "description": "No-frills SQL schema migration",
+  "bin": {
+    "careen": "bin/careen.js"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "node_modules/.bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/programble/careen"
+  },
+  "keywords": [
+    "sql",
+    "schema",
+    "migration"
+  ],
+  "author": "Curtis McEnroe <curtis@cmcenroe.me> (http://cmcenroe.me)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/programble/careen/issues"
+  },
+  "homepage": "https://github.com/programble/careen",
+  "dependencies": {
+    "bluebird": "^2.3.11",
+    "ramda": "^0.8.0",
+    "super-error": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.0.1",
+    "sinon": "^1.12.1"
+  }
+}

@@ -1,6 +1,6 @@
 # Careen
 
-No-frills SQL schema migration tool.
+No-frills SQL schema migration.
 
 ## Feature Goals
 
