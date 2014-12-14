@@ -16,6 +16,7 @@ No-frills SQL schema migration.
 - Functional programming, aided by [Ramda](https://github.com/ramda/ramda)
 - Abstracted SQL database support
 - Minimal dependencies
+- Thorough unit and functional tests
 
 > It's because of our plans, man<br>
 > All our beautiful, ridiculous plans<br>
