@@ -5,7 +5,11 @@ No-frills SQL schema migration.
 ## Feature Goals
 
 - Runs SQL files without any excess abstraction
-- Supports major SQL databases: PostgreSQL, MySQL, SQLite3
+- Supports major SQL databases
+  - PostgreSQL
+  - SQLite3
+  - MySQL?
+  - MariaDB?
 - Configurable with sane defaults
 - Keeps detailed information about migration application
 - Can be used as a library
@@ -17,6 +21,8 @@ No-frills SQL schema migration.
 - Abstracted SQL database support
 - Minimal dependencies
 - Thorough unit and functional tests
+
+---
 
 > It's because of our plans, man<br>
 > All our beautiful, ridiculous plans<br>
