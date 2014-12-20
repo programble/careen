@@ -1,7 +1,7 @@
 # Careen
 
 [![Build Status](https://travis-ci.org/programble/careen.svg?branch=master)](https://travis-ci.org/programble/careen)
-[![Coverage Status](https://img.shields.io/coveralls/programble/careen.svg)](https://coveralls.io/r/programble/careen?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/programble/careen.svg?style=flat)](https://coveralls.io/r/programble/careen?branch=master)
 
 No-frills SQL schema migration.
 
