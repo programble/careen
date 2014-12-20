@@ -1,5 +1,7 @@
 # Careen
 
+[![Build Status](https://travis-ci.org/programble/careen.svg?branch=master)](https://travis-ci.org/programble/careen)
+
 No-frills SQL schema migration.
 
 ## Feature Goals
