@@ -29,7 +29,7 @@
   "homepage": "https://github.com/programble/careen",
   "dependencies": {
     "bluebird": "^2.3.11",
-    "ramda": "^0.8.0"
+    "ramda": "^0.9.1"
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
