@@ -26,11 +26,13 @@
   "homepage": "https://github.com/programble/careen",
   "dependencies": {
     "bluebird": "^2.9.12",
+    "hemp": "^0.1.2",
     "ramda": "^0.10.0"
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
     "istanbul": "^0.3.6",
-    "mocha": "^2.1.0"
+    "mocha": "^2.1.0",
+    "sqlite3": "^3.0.5"
   }
 }
