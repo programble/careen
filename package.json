@@ -1,0 +1,36 @@
+{
+  "name": "careen",
+  "version": "0.0.0",
+  "description": "SQL schema migration. Nothing more. Nothing less.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "NODE_ENV=test node_modules/.bin/mocha",
+    "coverage": "NODE_ENV=test node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
+    "coveralls": "node_modules/.bin/coveralls < coverage/lcov.info",
+    "clean": "rm -rf coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/programble/careen"
+  },
+  "keywords": [
+    "sql",
+    "schema",
+    "migration"
+  ],
+  "author": "Curtis McEnroe <curtis@cmcenroe.me> (http://cmcenroe.me)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/programble/careen/issues"
+  },
+  "homepage": "https://github.com/programble/careen",
+  "dependencies": {
+    "bluebird": "^2.9.12",
+    "ramda": "^0.10.0"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.6",
+    "mocha": "^2.1.0"
+  }
+}
