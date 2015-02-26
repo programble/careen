@@ -8,11 +8,11 @@ module.exports = function(t) {
     connect: function() {
       return this.db = this.configuration.then(t.Implementation.connect);
     },
-    ensureMigrationsTable: function() {
-      return this.db.then(t.Implementation.ensureMigrationsTable('migrations'));
-    },
     beginTransaction: function() {
       return this.db.then(t.Implementation.beginTransaction);
+    },
+    ensureJournal: function() {
+      return this.db.then(t.Implementation.ensureJournal);
     },
     disconnect: function() {
       return this.db.then(t.Implementation.disconnect);
@@ -39,29 +39,6 @@ module.exports = function(t) {
         return this.db.then(t.Implementation.disconnect);
       });
       after(hooks.dropDatabase);
-    });
-
-    describe('ensureMigrationsTable', function() {
-      describe('without existing table', function() {
-        before(hooks.createDatabase);
-        before(hooks.connect);
-        it('succeeds', function() {
-          return this.db.then(t.Implementation.ensureMigrationsTable('migrations'));
-        });
-        after(hooks.disconnect);
-        after(hooks.dropDatabase);
-      });
-
-      describe('with existing table', function() {
-        before(hooks.createDatabase);
-        before(hooks.connect);
-        before(hooks.ensureMigrationsTable);
-        it('succeeds', function() {
-          return this.db.then(t.Implementation.ensureMigrationsTable('migrations'));
-        });
-        after(hooks.disconnect);
-        after(hooks.dropDatabase);
-      });
     });
 
     describe('beginTransaction', function() {
@@ -94,6 +71,29 @@ module.exports = function(t) {
       });
       after(hooks.disconnect);
       after(hooks.dropDatabase);
+    });
+
+    describe('ensureJournal', function() {
+      describe('without journal', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+        it('succeeds', function() {
+          return this.db.then(t.Implementation.ensureJournal);
+        });
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+
+      describe('with journal', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+        before(hooks.ensureJournal);
+        it('succeeds', function() {
+          return this.db.then(t.Implementation.ensureJournal);
+        });
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
     });
   });
 };
