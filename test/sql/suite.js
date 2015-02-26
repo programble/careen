@@ -1,5 +1,7 @@
 'use strict';
 
+var Promise = require('bluebird');
+
 module.exports = function(t) {
   var hooks = {
     createDatabase: function() {
@@ -12,7 +14,8 @@ module.exports = function(t) {
       return this.db.then(t.Implementation.beginTransaction);
     },
     ensureJournal: function() {
-      return this.db.then(t.Implementation.ensureJournal);
+      return Promise.join(this.db, 'journal')
+        .spread(t.Implementation.ensureJournal);
     },
     disconnect: function() {
       return this.db.then(t.Implementation.disconnect);
@@ -78,7 +81,8 @@ module.exports = function(t) {
         before(hooks.createDatabase);
         before(hooks.connect);
         it('succeeds', function() {
-          return this.db.then(t.Implementation.ensureJournal);
+          return Promise.join(this.db, 'journal')
+            .spread(t.Implementation.ensureJournal);
         });
         after(hooks.disconnect);
         after(hooks.dropDatabase);
@@ -89,7 +93,8 @@ module.exports = function(t) {
         before(hooks.connect);
         before(hooks.ensureJournal);
         it('succeeds', function() {
-          return this.db.then(t.Implementation.ensureJournal);
+          return Promise.join(this.db, 'journal')
+            .spread(t.Implementation.ensureJournal);
         });
         after(hooks.disconnect);
         after(hooks.dropDatabase);
