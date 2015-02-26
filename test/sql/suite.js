@@ -100,5 +100,35 @@ module.exports = function(t) {
         after(hooks.dropDatabase);
       });
     });
+
+    describe('appendJournal', function() {
+      describe('with empty journal', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+        before(hooks.ensureJournal);
+        it('succeeds', function() {
+          return Promise.join(this.db, 'journal', 'apply', '1', 'test')
+            .spread(t.Implementation.appendJournal);
+        });
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+
+      describe('with non-empty journal', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+        before(hooks.ensureJournal);
+        before(function() {
+          return Promise.join(this.db, 'journal', 'apply', '1', 'test')
+            .spread(t.Implementation.appendJournal);
+        });
+        it('succeeds', function() {
+          return Promise.join(this.db, 'journal', 'rollback', '1', 'test')
+            .spread(t.Implementation.appendJournal);
+        });
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+    });
   });
 };
