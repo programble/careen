@@ -11,6 +11,9 @@ module.exports = function(t) {
     ensureMigrationsTable: function() {
       return this.db.then(t.Implementation.ensureMigrationsTable('migrations'));
     },
+    beginTransaction: function() {
+      return this.db.then(t.Implementation.beginTransaction);
+    },
     disconnect: function() {
       return this.db.then(t.Implementation.disconnect);
     },
@@ -59,6 +62,38 @@ module.exports = function(t) {
         after(hooks.disconnect);
         after(hooks.dropDatabase);
       });
+    });
+
+    describe('beginTransaction', function() {
+      before(hooks.createDatabase);
+      before(hooks.connect);
+      it('succeeds', function() {
+        return this.db.then(t.Implementation.beginTransaction);
+      });
+      after(hooks.disconnect);
+      after(hooks.dropDatabase);
+    });
+
+    describe('commitTransaction', function() {
+      before(hooks.createDatabase);
+      before(hooks.connect);
+      before(hooks.beginTransaction);
+      it('succeeds', function() {
+        return this.db.then(t.Implementation.commitTransaction);
+      });
+      after(hooks.disconnect);
+      after(hooks.dropDatabase);
+    });
+
+    describe('rollbackTransaction', function() {
+      before(hooks.createDatabase);
+      before(hooks.connect);
+      before(hooks.beginTransaction);
+      it('succeeds', function() {
+        return this.db.then(t.Implementation.rollbackTransaction);
+      });
+      after(hooks.disconnect);
+      after(hooks.dropDatabase);
     });
   });
 };
