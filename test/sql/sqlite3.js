@@ -11,7 +11,7 @@ Suite({
   createDatabase: function() {
     return Promise.resolve({filename: ':memory:'});
   },
-  dropDatabase: function() {
+  dropDatabase: function(configuration) {
     return Promise.resolve();
   }
 });
