@@ -7,7 +7,8 @@
     "test": "NODE_ENV=test node_modules/.bin/mocha",
     "coverage": "NODE_ENV=test node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
     "coveralls": "node_modules/.bin/coveralls < coverage/lcov.info",
-    "clean": "rm -rf coverage"
+    "jsdoc": "node_modules/.bin/jsdoc --destination doc --recurse package.json README.md lib",
+    "clean": "rm -rf coverage doc"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "coveralls": "^2.11.2",
     "istanbul": "^0.3.6",
+    "jsdoc": "^3.3.0-beta1",
     "mocha": "^2.1.0",
     "pg": "^4.3.0",
     "sqlite3": "^3.0.5"
