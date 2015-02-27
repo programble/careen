@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: dummy.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: dummy.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+/**
+ * Common interface to all SQL databases. Implemented in this file as dummy
+ * functions that store state in a plain object instead of connecting to a
+ * database.
+ *
+ * @interface SQLDatabase
+ */
+
+var R = require('ramda');
+var Promise = require('bluebird');
+
+/**
+ * Connect to a database.
+ * @alias SQLDatabase.connect
+ * @param {Object} configuration - Connection configuration
+ * @returns {Promise.&lt;*>} Database connection
+ */
+function connect(configuration) {
+  return Promise.resolve({
+    live: {tables: {}},
+    transaction: null,
+    rollback: null
+  });
+}
+
+/**
+ * Disconnect from a database.
+ * @alias SQLDatabase.disconnect
+ * @param {*} db - Database connection, from {@link SQLDatabase.connect}
+ * @returns {Promise.&lt;*>}
+ */
+function disconnect(db) {
+  return Promise.resolve();
+}
+
+/**
+ * Begin a transaction.
+ * @alias SQLDatabase.beginTransaction
+ * @param {*} db - Database connection, from {@link SQLDatabase.connect}
+ * @returns {Promise.&lt;*>}
+ */
+function beginTransaction(db) {
+  db.rollback = R.clone(db.live);
+  db.transaction = R.clone(db.live);
+  return Promise.resolve();
+}
+
+/**
+ * Commit the current transaction.
+ * @alias SQLDatabase.commitTransaction
+ * @param {*} db - Database connection, from {@link SQLDatabase.connect}
+ * @returns {Promise.&lt;*>}
+ */
+function commitTransaction(db) {
+  db.live = db.transaction;
+  db.transaction = null;
+  db.rollback = null;
+  return Promise.resolve();
+}
+
+/**
+ * Rollback the current transaction.
+ * @alias SQLDatabase.rollbackTransaction
+ * @param {*} db - Database connection, from {@link SQLDatabase.connect}
+ * @returns {Promise.&lt;*>}
+ */
+function rollbackTransaction(db) {
+  db.live = db.rollback;
+  db.transaction = null;
+  db.rollback = null;
+  return Promise.resolve();
+}
+
+/**
+ * Create the migration journal table if it does not already exist. Curried.
+ * @alias SQLDatabase.ensureJournal
+ * @param {*} db - Database connection, from {@link SQLDatabase.connect}
+ * @param {string} tableName - Name of the journal table
+ * @returns {Promise.&lt;*>}
+ */
+function ensureJournal(db, tableName) {
+  var tables = (db.transaction || db.live).tables;
+  if (!tables[tableName]) tables[tableName] = [];
+  return Promise.resolve();
+}
+
+/**
+ * Append an entry to the migration journal table. Curried.
+ * @alias SQLDatabase.appendJournal
+ * @param {*} db - Database connection, from {@link SQLDatabase.connect}
+ * @param {string} tableName - Name of the journal table
+ * @param {string} operation - Migration operation type
+ * @param {string} migrationID - ID of the migration
+ * @param {string} migrationName - Name of the migration
+ * @returns {Promise.&lt;*>}
+ */
+function appendJournal(db, tableName, operation, migrationID, migrationName) {
+  var journal = (db.transaction || db.live).tables[tableName];
+  journal.push({
+    timestamp: new Date(),
+    operation: operation,
+    migrationID: migrationID,
+    migrationName: migrationName
+  });
+  return Promise.resolve();
+}
+
+/**
+ * @typedef {Object} SQLDatabase~JournalEntry
+ * @property {Date} timestamp - Timestamp the entry was written
+ * @property {string} operation - Migration operation type
+ * @property {string} migrationID - ID of the migration
+ * @property {string} migrationName - Name of the migration
+ */
+
+/**
+ * Read entries of the migration journal table, in the order they were added.
+ * Curried.
+ *
+ * @alias SQLDatabase.readJournal
+ * @param {*} db - Database connection, from {@link SQLDatabase.connect}
+ * @param {string} tableName - Name of the journal table
+ * @returns {Promise.&lt;SQLDatabase~JournalEntry[]>}
+ */
+function readJournal(db, tableName) {
+  return Promise.resolve((db.transaction || db.live).tables[tableName]);
+}
+
+module.exports = {
+  connect: connect,
+  disconnect: disconnect,
+  beginTransaction: beginTransaction,
+  commitTransaction: commitTransaction,
+  rollbackTransaction: rollbackTransaction,
+  ensureJournal: R.curry(ensureJournal),
+  appendJournal: R.curry(appendJournal),
+  readJournal: R.curry(readJournal)
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-PostgreSQL.html">PostgreSQL</a></li><li><a href="module-SQLite3.html">SQLite3</a></li></ul><h3>Interfaces</h3><ul><li><a href="SQLDatabase.html">SQLDatabase</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta1</a> on Fri Feb 27 2015 00:50:19 GMT-0500 (EST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
