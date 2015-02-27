@@ -4,8 +4,8 @@
   "description": "SQL schema migration. Nothing more. Nothing less.",
   "main": "lib/index.js",
   "scripts": {
-    "test": "NODE_ENV=test node_modules/.bin/mocha",
-    "coverage": "NODE_ENV=test node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
+    "test": "node_modules/.bin/mocha",
+    "coverage": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
     "coveralls": "node_modules/.bin/coveralls < coverage/lcov.info",
     "jsdoc": "node_modules/.bin/jsdoc --destination doc --recurse package.json README.md lib",
     "clean": "rm -rf coverage doc"
