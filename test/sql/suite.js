@@ -1,5 +1,7 @@
 'use strict';
 
+var assert = require('assert');
+
 var Promise = require('bluebird');
 
 module.exports = function(t) {
@@ -126,6 +128,102 @@ module.exports = function(t) {
           return Promise.join(this.db, 'journal', 'rollback', '1', 'test')
             .spread(t.Implementation.appendJournal);
         });
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+    });
+
+    describe('readJournal', function() {
+      describe('with empty journal', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+        before(hooks.ensureJournal);
+
+        it('succeeds', function() {
+          return this.entries = Promise.join(this.db, 'journal')
+            .spread(t.Implementation.readJournal);
+        });
+        it('returns empty array', function() {
+          return this.entries.tap(function(entries) {
+            assert.deepEqual(entries, []);
+          });
+        });
+
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+
+      describe('with a single entry', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+        before(hooks.ensureJournal);
+        before(function() {
+          return Promise.join(this.db, 'journal', 'apply', '1', 'test')
+            .spread(t.Implementation.appendJournal);
+        });
+
+        it('succeeds', function() {
+          return this.entries = Promise.join(this.db, 'journal')
+            .spread(t.Implementation.readJournal);
+        });
+        it('returns Array.<Object>', function() {
+          return this.entries
+            .tap(function(entries) {
+              assert(Array.isArray(entries));
+            })
+            .each(function(entry) {
+              assert.equal(typeof entry, 'object');
+            });
+        });
+        it('returns Date timestamp', function() {
+          return this.entries.get(0).tap(function(entry) {
+            assert(entry.timestamp instanceof Date);
+          });
+        });
+        it('returns operation', function() {
+          return this.entries.get(0).tap(function(entry) {
+            assert.equal(entry.operation, 'apply');
+          });
+        });
+        it('returns migrationID', function() {
+          return this.entries.get(0).tap(function(entry) {
+            assert.equal(entry.migrationID, '1');
+          });
+        });
+        it('returns migrationName', function() {
+          return this.entries.get(0).tap(function(entry) {
+            assert.equal(entry.migrationName, 'test');
+          });
+        });
+
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+
+      describe('with multiple entries', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+        before(hooks.ensureJournal);
+        before(function() {
+          return Promise.join(this.db, 'journal', 'apply', '1', 'first')
+            .spread(t.Implementation.appendJournal);
+        });
+        before(function() {
+          return Promise.join(this.db, 'journal', 'apply', '2', 'second')
+            .spread(t.Implementation.appendJournal);
+        });
+
+        it('succeeds', function() {
+          return this.entries = Promise.join(this.db, 'journal')
+            .spread(t.Implementation.readJournal);
+        });
+        it('returns ordered entries', function() {
+          return this.entries.tap(function(entries) {
+            assert.equal(entries[0].migrationID, '1');
+            assert.equal(entries[1].migrationID, '2');
+          });
+        });
+
         after(hooks.disconnect);
         after(hooks.dropDatabase);
       });
