@@ -27,7 +27,24 @@ module.exports = function(t) {
     }
   };
 
+  var assertImplements = function(name, length) {
+    return function() {
+      assert.equal(typeof t.Implementation[name], 'function');
+      assert.equal(t.Implementation[name].length, length);
+    };
+  };
+
   (t.skip ? describe.skip : describe)(t.prettyName, function() {
+    it('implements connect', assertImplements('connect', 1));
+    it('implements disconnect', assertImplements('disconnect', 1));
+    it('implements beginTransaction', assertImplements('beginTransaction', 1));
+    it('implements commitTransaction', assertImplements('commitTransaction', 1));
+    it('implements rollbackTransaction', assertImplements('rollbackTransaction', 1));
+    it('implements ensureJournal', assertImplements('ensureJournal', 2));
+    it('implements appendJournal', assertImplements('appendJournal', 5));
+    it('implements readJournal', assertImplements('readJournal', 2));
+    it('implements runMigrationSQL', assertImplements('runMigrationSQL', 2));
+
     describe('connect', function() {
       before(hooks.createDatabase);
       it('succeeds', function() {
@@ -222,6 +239,64 @@ module.exports = function(t) {
             assert.equal(entries[0].migrationID, '1');
             assert.equal(entries[1].migrationID, '2');
           });
+        });
+
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+    });
+
+    describe('runMigrationSQL', function() {
+      describe('with a single statement', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+
+        it('succeeds', function() {
+          return Promise.join(this.db, 'CREATE TABLE a (a INTEGER);')
+            .spread(t.Implementation.runMigrationSQL);
+        });
+
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+
+      describe('with multiple statements', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+
+        it('succeeds', function() {
+          return Promise.join(
+            this.db,
+            'CREATE TABLE a (a INTEGER); CREATE TABLE b (b INTEGER);'
+          ).spread(t.Implementation.runMigrationSQL);
+        });
+
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+
+      describe('with newlines', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+
+        it('succeeds', function() {
+          return Promise.join(this.db,'CREATE TABLE a\n(a INTEGER);')
+            .spread(t.Implementation.runMigrationSQL);
+        });
+
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
+
+      describe('with comments', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+
+        it('succeeds', function() {
+          return Promise.join(
+            this.db,
+            'CREATE TABLE a (a INTEGER);\n-- comment\nCREATE TABLE b (b INTEGER);'
+          ).spread(t.Implementation.runMigrationSQL);
         });
 
         after(hooks.disconnect);
