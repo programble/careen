@@ -11,8 +11,8 @@ var databaseID = 1;
 
 Suite({
   prettyName: 'PostgreSQL',
-  skip: process.env.TEST_SKIP_SQL_POSTGRESQL,
-  Implementation: require('../../lib/sql/postgresql'),
+  skip: process.env.TEST_SKIP_CLIENT_POSTGRESQL,
+  Client: require('../../lib/clients/postgresql'),
   createDatabase: function() {
     var configuration = {database: 'careen-test-' + databaseID};
     databaseID++;

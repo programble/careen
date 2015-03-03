@@ -10,17 +10,17 @@ module.exports = function(t) {
       return this.configuration = t.createDatabase();
     },
     connect: function() {
-      return this.db = this.configuration.then(t.Implementation.connect);
+      return this.db = this.configuration.then(t.Client.connect);
     },
     beginTransaction: function() {
-      return this.db.then(t.Implementation.beginTransaction);
+      return this.db.then(t.Client.beginTransaction);
     },
     ensureJournal: function() {
       return Promise.join(this.db, 'journal')
-        .spread(t.Implementation.ensureJournal);
+        .spread(t.Client.ensureJournal);
     },
     disconnect: function() {
-      return this.db.then(t.Implementation.disconnect);
+      return this.db.then(t.Client.disconnect);
     },
     dropDatabase: function() {
       return this.configuration.then(t.dropDatabase);
@@ -29,12 +29,12 @@ module.exports = function(t) {
 
   var assertImplements = function(name, length) {
     return function() {
-      assert.equal(typeof t.Implementation[name], 'function');
-      assert.equal(t.Implementation[name].length, length);
+      assert.equal(typeof t.Client[name], 'function');
+      assert.equal(t.Client[name].length, length);
     };
   };
 
-  (t.skip ? describe.skip : describe)(t.prettyName, function() {
+  (t.skip ? describe.skip : describe)(t.prettyName + ' client', function() {
     it('implements connect', assertImplements('connect', 1));
     it('implements disconnect', assertImplements('disconnect', 1));
     it('implements beginTransaction', assertImplements('beginTransaction', 1));
@@ -48,7 +48,7 @@ module.exports = function(t) {
     describe('connect', function() {
       before(hooks.createDatabase);
       it('succeeds', function() {
-        return this.db = this.configuration.then(t.Implementation.connect);
+        return this.db = this.configuration.then(t.Client.connect);
       });
       after(hooks.disconnect);
       after(hooks.dropDatabase);
@@ -58,7 +58,7 @@ module.exports = function(t) {
       before(hooks.createDatabase);
       before(hooks.connect);
       it('succeeds', function() {
-        return this.db.then(t.Implementation.disconnect);
+        return this.db.then(t.Client.disconnect);
       });
       after(hooks.dropDatabase);
     });
@@ -67,7 +67,7 @@ module.exports = function(t) {
       before(hooks.createDatabase);
       before(hooks.connect);
       it('succeeds', function() {
-        return this.db.then(t.Implementation.beginTransaction);
+        return this.db.then(t.Client.beginTransaction);
       });
       after(hooks.disconnect);
       after(hooks.dropDatabase);
@@ -78,7 +78,7 @@ module.exports = function(t) {
       before(hooks.connect);
       before(hooks.beginTransaction);
       it('succeeds', function() {
-        return this.db.then(t.Implementation.commitTransaction);
+        return this.db.then(t.Client.commitTransaction);
       });
       after(hooks.disconnect);
       after(hooks.dropDatabase);
@@ -89,7 +89,7 @@ module.exports = function(t) {
       before(hooks.connect);
       before(hooks.beginTransaction);
       it('succeeds', function() {
-        return this.db.then(t.Implementation.rollbackTransaction);
+        return this.db.then(t.Client.rollbackTransaction);
       });
       after(hooks.disconnect);
       after(hooks.dropDatabase);
@@ -101,7 +101,7 @@ module.exports = function(t) {
         before(hooks.connect);
         it('succeeds', function() {
           return Promise.join(this.db, 'journal')
-            .spread(t.Implementation.ensureJournal);
+            .spread(t.Client.ensureJournal);
         });
         after(hooks.disconnect);
         after(hooks.dropDatabase);
@@ -113,7 +113,7 @@ module.exports = function(t) {
         before(hooks.ensureJournal);
         it('succeeds', function() {
           return Promise.join(this.db, 'journal')
-            .spread(t.Implementation.ensureJournal);
+            .spread(t.Client.ensureJournal);
         });
         after(hooks.disconnect);
         after(hooks.dropDatabase);
@@ -127,7 +127,7 @@ module.exports = function(t) {
         before(hooks.ensureJournal);
         it('succeeds', function() {
           return Promise.join(this.db, 'journal', 'apply', '1', 'test')
-            .spread(t.Implementation.appendJournal);
+            .spread(t.Client.appendJournal);
         });
         after(hooks.disconnect);
         after(hooks.dropDatabase);
@@ -139,11 +139,11 @@ module.exports = function(t) {
         before(hooks.ensureJournal);
         before(function() {
           return Promise.join(this.db, 'journal', 'apply', '1', 'test')
-            .spread(t.Implementation.appendJournal);
+            .spread(t.Client.appendJournal);
         });
         it('succeeds', function() {
           return Promise.join(this.db, 'journal', 'rollback', '1', 'test')
-            .spread(t.Implementation.appendJournal);
+            .spread(t.Client.appendJournal);
         });
         after(hooks.disconnect);
         after(hooks.dropDatabase);
@@ -158,7 +158,7 @@ module.exports = function(t) {
 
         it('succeeds', function() {
           return this.entries = Promise.join(this.db, 'journal')
-            .spread(t.Implementation.readJournal);
+            .spread(t.Client.readJournal);
         });
         it('returns empty array', function() {
           return this.entries.tap(function(entries) {
@@ -176,12 +176,12 @@ module.exports = function(t) {
         before(hooks.ensureJournal);
         before(function() {
           return Promise.join(this.db, 'journal', 'apply', '1', 'test')
-            .spread(t.Implementation.appendJournal);
+            .spread(t.Client.appendJournal);
         });
 
         it('succeeds', function() {
           return this.entries = Promise.join(this.db, 'journal')
-            .spread(t.Implementation.readJournal);
+            .spread(t.Client.readJournal);
         });
         it('returns Array.<Object>', function() {
           return this.entries
@@ -223,16 +223,16 @@ module.exports = function(t) {
         before(hooks.ensureJournal);
         before(function() {
           return Promise.join(this.db, 'journal', 'apply', '1', 'first')
-            .spread(t.Implementation.appendJournal);
+            .spread(t.Client.appendJournal);
         });
         before(function() {
           return Promise.join(this.db, 'journal', 'apply', '2', 'second')
-            .spread(t.Implementation.appendJournal);
+            .spread(t.Client.appendJournal);
         });
 
         it('succeeds', function() {
           return this.entries = Promise.join(this.db, 'journal')
-            .spread(t.Implementation.readJournal);
+            .spread(t.Client.readJournal);
         });
         it('returns ordered entries', function() {
           return this.entries.tap(function(entries) {
@@ -253,7 +253,7 @@ module.exports = function(t) {
 
         it('succeeds', function() {
           return Promise.join(this.db, 'CREATE TABLE a (a INTEGER);')
-            .spread(t.Implementation.runMigrationSQL);
+            .spread(t.Client.runMigrationSQL);
         });
 
         after(hooks.disconnect);
@@ -268,7 +268,7 @@ module.exports = function(t) {
           return Promise.join(
             this.db,
             'CREATE TABLE a (a INTEGER); CREATE TABLE b (b INTEGER);'
-          ).spread(t.Implementation.runMigrationSQL);
+          ).spread(t.Client.runMigrationSQL);
         });
 
         after(hooks.disconnect);
@@ -281,7 +281,7 @@ module.exports = function(t) {
 
         it('succeeds', function() {
           return Promise.join(this.db,'CREATE TABLE a\n(a INTEGER);')
-            .spread(t.Implementation.runMigrationSQL);
+            .spread(t.Client.runMigrationSQL);
         });
 
         after(hooks.disconnect);
@@ -296,7 +296,7 @@ module.exports = function(t) {
           return Promise.join(
             this.db,
             'CREATE TABLE a (a INTEGER);\n-- comment\nCREATE TABLE b (b INTEGER);'
-          ).spread(t.Implementation.runMigrationSQL);
+          ).spread(t.Client.runMigrationSQL);
         });
 
         after(hooks.disconnect);
