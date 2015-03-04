@@ -8,6 +8,6 @@ Suite({
   prettyName: 'Dummy',
   skip: false,
   Client: require('../../lib/clients/dummy'),
-  createDatabase: function() { return Promise.resolve(); },
+  createDatabase: function() { return Promise.resolve({}); },
   dropDatabase: function() { return Promise.resolve(); }
 });
