@@ -13,20 +13,51 @@ var Runner = require('../lib/runner');
 
 var assertFalse = R.partial(assert, false);
 
+var hooks = {
+  spyDummy: function() {
+    Sinon.spy(Dummy, 'connect');
+    Sinon.spy(Dummy, 'ensureJournal');
+    Sinon.spy(Dummy, 'readJournal');
+    Sinon.spy(Dummy, 'beginTransaction');
+    Sinon.spy(Dummy, 'runMigrationSQL');
+    Sinon.spy(Dummy, 'appendJournal');
+    Sinon.spy(Dummy, 'rollbackTransaction');
+    Sinon.spy(Dummy, 'commitTransaction');
+    Sinon.spy(Dummy, 'disconnect');
+  },
+  restoreDummy: function() {
+    Dummy.connect.restore();
+    Dummy.ensureJournal.restore();
+    Dummy.readJournal.restore();
+    Dummy.beginTransaction.restore();
+    Dummy.runMigrationSQL.restore();
+    Dummy.appendJournal.restore();
+    Dummy.rollbackTransaction.restore();
+    Dummy.commitTransaction.restore();
+    Dummy.disconnect.restore();
+  },
+  spyFiles: function() {
+    Sinon.spy(Files, 'readUpSQL');
+    Sinon.spy(Files, 'readDownSQL');
+  },
+  restoreFiles: function() {
+    Files.readUpSQL.restore();
+    Files.readDownSQL.restore();
+  },
+  mockFS: function(config) {
+    return function() {
+      mockFS(config);
+    };
+  },
+  restoreFS: function() {
+    mockFS.restore();
+  }
+};
+
 describe('Runner', function() {
   describe('readJournal', function() {
-    before(function() {
-      Sinon.spy(Dummy, 'connect');
-      Sinon.spy(Dummy, 'ensureJournal');
-      Sinon.spy(Dummy, 'readJournal');
-      Sinon.spy(Dummy, 'disconnect');
-    });
-    after(function() {
-      Dummy.connect.restore();
-      Dummy.ensureJournal.restore();
-      Dummy.readJournal.restore();
-      Dummy.disconnect.restore();
-    });
+    before(hooks.spyDummy);
+    after(hooks.restoreDummy);
 
     it('succeeds', function() {
       return this.journal = Runner.readJournal('dummy', {}, 'journal');
@@ -54,34 +85,18 @@ describe('Runner', function() {
 
   describe('applyEach', function() {
     describe('without error', function() {
-      before(function() {
-        mockFS({
-          migrations: {
-            '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
-            '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n',
-            '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
-          }
-        });
-        Sinon.spy(Dummy, 'connect');
-        Sinon.spy(Dummy, 'ensureJournal');
-        Sinon.spy(Dummy, 'beginTransaction');
-        Sinon.spy(Files, 'readUpSQL');
-        Sinon.spy(Dummy, 'runMigrationSQL');
-        Sinon.spy(Dummy, 'appendJournal');
-        Sinon.spy(Dummy, 'commitTransaction');
-        Sinon.spy(Dummy, 'disconnect');
-      });
-      after(function() {
-        Dummy.connect.restore();
-        Dummy.ensureJournal.restore();
-        Dummy.beginTransaction.restore();
-        Files.readUpSQL.restore();
-        Dummy.runMigrationSQL.restore();
-        Dummy.appendJournal.restore();
-        Dummy.commitTransaction.restore();
-        Dummy.disconnect.restore();
-        mockFS.restore();
-      });
+      before(hooks.mockFS({
+        migrations: {
+          '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
+          '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n',
+          '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
+        }
+      }));
+      after(hooks.restoreFS);
+      before(hooks.spyDummy);
+      after(hooks.restoreDummy);
+      before(hooks.spyFiles);
+      after(hooks.restoreFiles);
 
       it('succeeds', function() {
         return Files.listMigrations('migrations')
@@ -114,36 +129,18 @@ describe('Runner', function() {
     });
 
     describe('with error', function() {
-      before(function() {
-        mockFS({
-          migrations: {
-            '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
-            '2.second.sql': 'ERROR test;\n---\nDROP TABLE b;\n',
-            '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
-          }
-        });
-        Sinon.spy(Dummy, 'connect');
-        Sinon.spy(Dummy, 'ensureJournal');
-        Sinon.spy(Dummy, 'beginTransaction');
-        Sinon.spy(Files, 'readUpSQL');
-        Sinon.spy(Dummy, 'runMigrationSQL');
-        Sinon.spy(Dummy, 'appendJournal');
-        Sinon.spy(Dummy, 'rollbackTransaction');
-        Sinon.spy(Dummy, 'commitTransaction');
-        Sinon.spy(Dummy, 'disconnect');
-      });
-      after(function() {
-        Dummy.connect.restore();
-        Dummy.ensureJournal.restore();
-        Dummy.beginTransaction.restore();
-        Files.readUpSQL.restore();
-        Dummy.runMigrationSQL.restore();
-        Dummy.appendJournal.restore();
-        Dummy.rollbackTransaction.restore();
-        Dummy.commitTransaction.restore();
-        Dummy.disconnect.restore();
-        mockFS.restore();
-      });
+      before(hooks.mockFS({
+        migrations: {
+          '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
+          '2.second.sql': 'ERROR test;\n---\nDROP TABLE b;\n',
+          '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
+        }
+      }));
+      after(hooks.restoreFS);
+      before(hooks.spyDummy);
+      after(hooks.restoreDummy);
+      before(hooks.spyFiles);
+      after(hooks.restoreFiles);
 
       it('fails', function() {
         this.applyEach = Files.listMigrations('migrations')
@@ -186,34 +183,18 @@ describe('Runner', function() {
 
   describe('applyAll', function() {
     describe('without error', function() {
-      before(function() {
-        mockFS({
-          migrations: {
-            '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
-            '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n',
-            '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
-          }
-        });
-        Sinon.spy(Dummy, 'connect');
-        Sinon.spy(Dummy, 'ensureJournal');
-        Sinon.spy(Dummy, 'beginTransaction');
-        Sinon.spy(Files, 'readUpSQL');
-        Sinon.spy(Dummy, 'runMigrationSQL');
-        Sinon.spy(Dummy, 'appendJournal');
-        Sinon.spy(Dummy, 'commitTransaction');
-        Sinon.spy(Dummy, 'disconnect');
-      });
-      after(function() {
-        Dummy.connect.restore();
-        Dummy.ensureJournal.restore();
-        Dummy.beginTransaction.restore();
-        Files.readUpSQL.restore();
-        Dummy.runMigrationSQL.restore();
-        Dummy.appendJournal.restore();
-        Dummy.commitTransaction.restore();
-        Dummy.disconnect.restore();
-        mockFS.restore();
-      });
+      before(hooks.mockFS({
+        migrations: {
+          '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
+          '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n',
+          '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
+        }
+      }));
+      after(hooks.restoreFS);
+      before(hooks.spyDummy);
+      after(hooks.restoreDummy);
+      before(hooks.spyFiles);
+      after(hooks.restoreFiles);
 
       it('succeeds', function() {
         return Files.listMigrations('migrations')
@@ -246,36 +227,18 @@ describe('Runner', function() {
     });
 
     describe('with error', function() {
-      before(function() {
-        mockFS({
-          migrations: {
-            '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
-            '2.second.sql': 'ERROR test;\n---\nDROP TABLE b;\n',
-            '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
-          }
-        });
-        Sinon.spy(Dummy, 'connect');
-        Sinon.spy(Dummy, 'ensureJournal');
-        Sinon.spy(Dummy, 'beginTransaction');
-        Sinon.spy(Files, 'readUpSQL');
-        Sinon.spy(Dummy, 'runMigrationSQL');
-        Sinon.spy(Dummy, 'appendJournal');
-        Sinon.spy(Dummy, 'rollbackTransaction');
-        Sinon.spy(Dummy, 'commitTransaction');
-        Sinon.spy(Dummy, 'disconnect');
-      });
-      after(function() {
-        Dummy.connect.restore();
-        Dummy.ensureJournal.restore();
-        Dummy.beginTransaction.restore();
-        Files.readUpSQL.restore();
-        Dummy.runMigrationSQL.restore();
-        Dummy.appendJournal.restore();
-        Dummy.rollbackTransaction.restore();
-        Dummy.commitTransaction.restore();
-        Dummy.disconnect.restore();
-        mockFS.restore();
-      });
+      before(hooks.mockFS({
+        migrations: {
+          '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
+          '2.second.sql': 'ERROR test;\n---\nDROP TABLE b;\n',
+          '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
+        }
+      }));
+      after(hooks.restoreFS);
+      before(hooks.spyDummy);
+      after(hooks.restoreDummy);
+      before(hooks.spyFiles);
+      after(hooks.restoreFiles);
 
       it('fails', function() {
         this.applyAll = Files.listMigrations('migrations')
