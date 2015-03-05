@@ -272,4 +272,95 @@ describe('Runner', function() {
       after(hooks.restoreFS);
     });
   });
+
+  describe('applyDry', function() {
+    describe('without error', function() {
+      before(hooks.mockFS({migrations: migrations.success3}));
+      before(hooks.spyDummy);
+      before(hooks.spyFiles);
+
+      it('succeeds', function() {
+        return Files.listMigrations('migrations')
+          .then(Runner.applyDry('dummy', {}, 'journal'));
+      });
+      it('calls connect', function() {
+        assert.equal(Dummy.connect.callCount, 1);
+      });
+      it('calls ensureJournal', function() {
+        assert.equal(Dummy.ensureJournal.callCount, 1);
+      });
+      it('calls beginTransaction', function() {
+        assert.equal(Dummy.beginTransaction.callCount, 1);
+      });
+      it('calls readUpSQL for each', function() {
+        assert.equal(Files.readUpSQL.callCount, 3);
+      });
+      it('calls runMigrationSQL for each', function() {
+        assert.equal(Dummy.runMigrationSQL.callCount, 3);
+      });
+      it('calls appendJournal for each', function() {
+        assert.equal(Dummy.appendJournal.callCount, 3);
+      });
+      it('does not call commitTransaction', function() {
+        assert.equal(Dummy.commitTransaction.callCount, 0);
+      });
+      it('calls rollbackTransaction', function() {
+        assert.equal(Dummy.rollbackTransaction.callCount, 1);
+      });
+      it('calls disconnect', function() {
+        assert.equal(Dummy.disconnect.callCount, 1);
+      });
+
+      after(hooks.restoreFiles);
+      after(hooks.restoreDummy);
+      after(hooks.restoreFS);
+    });
+
+    describe('with error', function() {
+      before(hooks.mockFS({migrations: migrations.fail2Up}));
+      before(hooks.spyDummy);
+      before(hooks.spyFiles);
+
+      it('fails', function() {
+        this.applyAll = Files.listMigrations('migrations')
+          .then(Runner.applyAll('dummy', {}, 'journal'));
+        return this.applyAll.then(assertFalse, R.T);
+      });
+      it('calls connect', function() {
+        assert.equal(Dummy.connect.callCount, 1);
+      });
+      it('calls ensureJournal', function() {
+        assert.equal(Dummy.ensureJournal.callCount, 1);
+      });
+      it('calls beginTransaction', function() {
+        assert.equal(Dummy.beginTransaction.callCount, 1);
+      });
+      it('calls readUpSQL for each', function() {
+        assert.equal(Files.readUpSQL.callCount, 2);
+      });
+      it('calls runMigrationSQL for each', function() {
+        assert.equal(Dummy.runMigrationSQL.callCount, 2);
+      });
+      it('calls appendJournal for each success', function() {
+        assert.equal(Dummy.appendJournal.callCount, 1);
+      });
+      it('does not call commitTransaction', function() {
+        assert.equal(Dummy.commitTransaction.callCount, 0);
+      });
+      it('calls rollbackTransaction', function() {
+        assert.equal(Dummy.rollbackTransaction.callCount, 1);
+      });
+      it('rethrows runMigrationSQL', function() {
+        Promise.join(
+          this.applyAll.then(null, R.identity),
+          Dummy.runMigrationSQL.secondCall.returnValue.then(null, R.identity),
+          assert.equal
+        );
+      });
+
+      after(hooks.restoreFiles);
+      after(hooks.restoreDummy);
+      after(hooks.restoreFS);
+    });
+  });
 });
