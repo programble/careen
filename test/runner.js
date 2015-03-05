@@ -54,10 +54,22 @@ var hooks = {
   }
 };
 
+var migrations = {
+  success3: {
+    '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
+    '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n',
+    '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
+  },
+  fail2Up: {
+    '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
+    '2.second.sql': 'ERROR test;\n---\nDROP TABLE b;\n',
+    '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
+  }
+};
+
 describe('Runner', function() {
   describe('readJournal', function() {
     before(hooks.spyDummy);
-    after(hooks.restoreDummy);
 
     it('succeeds', function() {
       return this.journal = Runner.readJournal('dummy', {}, 'journal');
@@ -81,22 +93,15 @@ describe('Runner', function() {
         assert.equal
       );
     });
+
+    after(hooks.restoreDummy);
   });
 
   describe('applyEach', function() {
     describe('without error', function() {
-      before(hooks.mockFS({
-        migrations: {
-          '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
-          '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n',
-          '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
-        }
-      }));
-      after(hooks.restoreFS);
+      before(hooks.mockFS({migrations: migrations.success3}));
       before(hooks.spyDummy);
-      after(hooks.restoreDummy);
       before(hooks.spyFiles);
-      after(hooks.restoreFiles);
 
       it('succeeds', function() {
         return Files.listMigrations('migrations')
@@ -126,21 +131,16 @@ describe('Runner', function() {
       it('calls disconnect', function() {
         assert.equal(Dummy.disconnect.callCount, 1);
       });
+
+      after(hooks.restoreFiles);
+      after(hooks.restoreDummy);
+      after(hooks.restoreFS);
     });
 
     describe('with error', function() {
-      before(hooks.mockFS({
-        migrations: {
-          '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
-          '2.second.sql': 'ERROR test;\n---\nDROP TABLE b;\n',
-          '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
-        }
-      }));
-      after(hooks.restoreFS);
+      before(hooks.mockFS({migrations: migrations.fail2Up}));
       before(hooks.spyDummy);
-      after(hooks.restoreDummy);
       before(hooks.spyFiles);
-      after(hooks.restoreFiles);
 
       it('fails', function() {
         this.applyEach = Files.listMigrations('migrations')
@@ -178,23 +178,18 @@ describe('Runner', function() {
           assert.equal
         );
       });
+
+      after(hooks.restoreFiles);
+      after(hooks.restoreDummy);
+      after(hooks.restoreFS);
     });
   });
 
   describe('applyAll', function() {
     describe('without error', function() {
-      before(hooks.mockFS({
-        migrations: {
-          '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
-          '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n',
-          '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
-        }
-      }));
-      after(hooks.restoreFS);
+      before(hooks.mockFS({migrations: migrations.success3}));
       before(hooks.spyDummy);
-      after(hooks.restoreDummy);
       before(hooks.spyFiles);
-      after(hooks.restoreFiles);
 
       it('succeeds', function() {
         return Files.listMigrations('migrations')
@@ -224,21 +219,16 @@ describe('Runner', function() {
       it('calls disconnect', function() {
         assert.equal(Dummy.disconnect.callCount, 1);
       });
+
+      after(hooks.restoreFiles);
+      after(hooks.restoreDummy);
+      after(hooks.restoreFS);
     });
 
     describe('with error', function() {
-      before(hooks.mockFS({
-        migrations: {
-          '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
-          '2.second.sql': 'ERROR test;\n---\nDROP TABLE b;\n',
-          '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
-        }
-      }));
-      after(hooks.restoreFS);
+      before(hooks.mockFS({migrations: migrations.fail2Up}));
       before(hooks.spyDummy);
-      after(hooks.restoreDummy);
       before(hooks.spyFiles);
-      after(hooks.restoreFiles);
 
       it('fails', function() {
         this.applyAll = Files.listMigrations('migrations')
@@ -276,6 +266,10 @@ describe('Runner', function() {
           assert.equal
         );
       });
+
+      after(hooks.restoreFiles);
+      after(hooks.restoreDummy);
+      after(hooks.restoreFS);
     });
   });
 });
