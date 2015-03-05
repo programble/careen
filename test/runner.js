@@ -96,7 +96,7 @@ describe('Runner', function() {
       it('calls beginTransaction for each', function() {
         assert.equal(Dummy.beginTransaction.callCount, 3);
       });
-      it('calls readUpSQL', function() {
+      it('calls readUpSQL for each', function() {
         assert.equal(Files.readUpSQL.callCount, 3);
       });
       it('calls runMigrationSQL for each', function() {
@@ -177,6 +177,138 @@ describe('Runner', function() {
       it('rethrows runMigrationSQL', function() {
         Promise.join(
           this.applyEach.then(null, R.identity),
+          Dummy.runMigrationSQL.secondCall.returnValue.then(null, R.identity),
+          assert.equal
+        );
+      });
+    });
+  });
+
+  describe('applyAll', function() {
+    describe('without error', function() {
+      before(function() {
+        mockFS({
+          migrations: {
+            '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
+            '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n',
+            '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
+          }
+        });
+        Sinon.spy(Dummy, 'connect');
+        Sinon.spy(Dummy, 'ensureJournal');
+        Sinon.spy(Dummy, 'beginTransaction');
+        Sinon.spy(Files, 'readUpSQL');
+        Sinon.spy(Dummy, 'runMigrationSQL');
+        Sinon.spy(Dummy, 'appendJournal');
+        Sinon.spy(Dummy, 'commitTransaction');
+        Sinon.spy(Dummy, 'disconnect');
+      });
+      after(function() {
+        Dummy.connect.restore();
+        Dummy.ensureJournal.restore();
+        Dummy.beginTransaction.restore();
+        Files.readUpSQL.restore();
+        Dummy.runMigrationSQL.restore();
+        Dummy.appendJournal.restore();
+        Dummy.commitTransaction.restore();
+        Dummy.disconnect.restore();
+        mockFS.restore();
+      });
+
+      it('succeeds', function() {
+        return Files.listMigrations('migrations')
+          .then(Runner.applyAll('dummy', {}, 'journal'));
+      });
+      it('calls connect', function() {
+        assert.equal(Dummy.connect.callCount, 1);
+      });
+      it('calls ensureJournal', function() {
+        assert.equal(Dummy.ensureJournal.callCount, 1);
+      });
+      it('calls beginTransaction', function() {
+        assert.equal(Dummy.beginTransaction.callCount, 1);
+      });
+      it('calls readUpSQL for each', function() {
+        assert.equal(Files.readUpSQL.callCount, 3);
+      });
+      it('calls runMigrationSQL for each', function() {
+        assert.equal(Dummy.runMigrationSQL.callCount, 3);
+      });
+      it('calls appendJournal for each', function() {
+        assert.equal(Dummy.appendJournal.callCount, 3);
+      });
+      it('calls commitTransaction', function() {
+        assert.equal(Dummy.commitTransaction.callCount, 1);
+      });
+      it('calls disconnect', function() {
+        assert.equal(Dummy.disconnect.callCount, 1);
+      });
+    });
+
+    describe('with error', function() {
+      before(function() {
+        mockFS({
+          migrations: {
+            '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
+            '2.second.sql': 'ERROR test;\n---\nDROP TABLE b;\n',
+            '3.third.sql': 'CREATE TABLE c (c INTEGER);\n---\nDROP TABLE c;\n'
+          }
+        });
+        Sinon.spy(Dummy, 'connect');
+        Sinon.spy(Dummy, 'ensureJournal');
+        Sinon.spy(Dummy, 'beginTransaction');
+        Sinon.spy(Files, 'readUpSQL');
+        Sinon.spy(Dummy, 'runMigrationSQL');
+        Sinon.spy(Dummy, 'appendJournal');
+        Sinon.spy(Dummy, 'rollbackTransaction');
+        Sinon.spy(Dummy, 'commitTransaction');
+        Sinon.spy(Dummy, 'disconnect');
+      });
+      after(function() {
+        Dummy.connect.restore();
+        Dummy.ensureJournal.restore();
+        Dummy.beginTransaction.restore();
+        Files.readUpSQL.restore();
+        Dummy.runMigrationSQL.restore();
+        Dummy.appendJournal.restore();
+        Dummy.rollbackTransaction.restore();
+        Dummy.commitTransaction.restore();
+        Dummy.disconnect.restore();
+        mockFS.restore();
+      });
+
+      it('fails', function() {
+        this.applyAll = Files.listMigrations('migrations')
+          .then(Runner.applyAll('dummy', {}, 'journal'));
+        return this.applyAll.then(assertFalse, R.T);
+      });
+      it('calls connect', function() {
+        assert.equal(Dummy.connect.callCount, 1);
+      });
+      it('calls ensureJournal', function() {
+        assert.equal(Dummy.ensureJournal.callCount, 1);
+      });
+      it('calls beginTransaction', function() {
+        assert.equal(Dummy.beginTransaction.callCount, 1);
+      });
+      it('calls readUpSQL for each', function() {
+        assert.equal(Files.readUpSQL.callCount, 2);
+      });
+      it('calls runMigrationSQL for each', function() {
+        assert.equal(Dummy.runMigrationSQL.callCount, 2);
+      });
+      it('calls appendJournal for each success', function() {
+        assert.equal(Dummy.appendJournal.callCount, 1);
+      });
+      it('does not call commitTransaction', function() {
+        assert.equal(Dummy.commitTransaction.callCount, 0);
+      });
+      it('calls rollbackTransaction', function() {
+        assert.equal(Dummy.rollbackTransaction.callCount, 1);
+      });
+      it('rethrows runMigrationSQL', function() {
+        Promise.join(
+          this.applyAll.then(null, R.identity),
           Dummy.runMigrationSQL.secondCall.returnValue.then(null, R.identity),
           assert.equal
         );
