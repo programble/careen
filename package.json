@@ -28,7 +28,7 @@
   "dependencies": {
     "bluebird": "^2.9.12",
     "hemp": "^0.1.2",
-    "ramda": "^0.10.0",
+    "ramda": "^0.11.0",
     "super-error": "^1.1.0"
   },
   "devDependencies": {
