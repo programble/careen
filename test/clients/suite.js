@@ -4,6 +4,8 @@ var assert = require('assert');
 
 var Promise = require('bluebird');
 
+var Runner = require('../../lib/runner');
+
 module.exports = function(t) {
   var hooks = {
     createDatabase: function() {
@@ -126,8 +128,9 @@ module.exports = function(t) {
         before(hooks.connect);
         before(hooks.ensureJournal);
         it('succeeds', function() {
-          return Promise.join(this.db, 'journal', 'apply', '1', 'test')
-            .spread(t.Client.appendJournal);
+          return Promise.join(
+            this.db, 'journal', Runner.OPERATION.APPLY, '1', 'test'
+          ).spread(t.Client.appendJournal);
         });
         after(hooks.disconnect);
         after(hooks.dropDatabase);
@@ -138,12 +141,14 @@ module.exports = function(t) {
         before(hooks.connect);
         before(hooks.ensureJournal);
         before(function() {
-          return Promise.join(this.db, 'journal', 'apply', '1', 'test')
-            .spread(t.Client.appendJournal);
+          return Promise.join(
+            this.db, 'journal', Runner.OPERATION.APPLY, '1', 'test'
+          ).spread(t.Client.appendJournal);
         });
         it('succeeds', function() {
-          return Promise.join(this.db, 'journal', 'rollback', '1', 'test')
-            .spread(t.Client.appendJournal);
+          return Promise.join(
+            this.db, 'journal', Runner.OPERATION.REVERT, '1', 'test'
+          ).spread(t.Client.appendJournal);
         });
         after(hooks.disconnect);
         after(hooks.dropDatabase);
@@ -175,8 +180,9 @@ module.exports = function(t) {
         before(hooks.connect);
         before(hooks.ensureJournal);
         before(function() {
-          return Promise.join(this.db, 'journal', 'apply', '1', 'test')
-            .spread(t.Client.appendJournal);
+          return Promise.join(
+            this.db, 'journal', Runner.OPERATION.APPLY, '1', 'test'
+          ).spread(t.Client.appendJournal);
         });
 
         it('succeeds', function() {
@@ -199,7 +205,7 @@ module.exports = function(t) {
         });
         it('returns operation', function() {
           return this.entries.get(0).tap(function(entry) {
-            assert.equal(entry.operation, 'apply');
+            assert.equal(entry.operation, Runner.OPERATION.APPLY);
           });
         });
         it('returns migrationID', function() {
@@ -222,12 +228,14 @@ module.exports = function(t) {
         before(hooks.connect);
         before(hooks.ensureJournal);
         before(function() {
-          return Promise.join(this.db, 'journal', 'apply', '1', 'first')
-            .spread(t.Client.appendJournal);
+          return Promise.join(
+            this.db, 'journal', Runner.OPERATION.APPLY, '1', 'first'
+          ).spread(t.Client.appendJournal);
         });
         before(function() {
-          return Promise.join(this.db, 'journal', 'apply', '2', 'second')
-            .spread(t.Client.appendJournal);
+          return Promise.join(
+            this.db, 'journal', Runner.OPERATION.APPLY, '2', 'second'
+          ).spread(t.Client.appendJournal);
         });
 
         it('succeeds', function() {
