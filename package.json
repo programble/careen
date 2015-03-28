@@ -1,0 +1,33 @@
+{
+  "name": "careen",
+  "version": "0.0.0",
+  "description": "SQL schema migration. Nothing more. Nothing less.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node_modules/.bin/tsc -m commonjs declaration/index.d.ts lib/index.ts",
+    "clean": "find lib -name '*.js' -delete"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/programble/careen.git"
+  },
+  "keywords": [
+    "sql",
+    "schema",
+    "migration"
+  ],
+  "author": "Curtis McEnroe <curtis@cmcenroe.me> (http://cmcenroe.me)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/programble/careen/issues"
+  },
+  "homepage": "https://github.com/programble/careen",
+  "dependencies": {
+    "bluebird": "^2.9.14",
+    "ramda": "^0.13.0"
+  },
+  "devDependencies": {
+    "typescript": "^1.4.1"
+  }
+}
