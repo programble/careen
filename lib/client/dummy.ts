@@ -5,16 +5,19 @@ import Promise = require('bluebird');
 
 import client = require('./index');
 
+// Optional defaults for the live dataset.
 export interface Config {
   tables?: {[s: string]: Object[]};
   sql?: string[];
 }
 
+// Dummy dataset containing a dictionary of tables and SQL history.
 interface DataSet {
   tables: {[s: string]: Object[]};
   sql: string[];
 }
 
+// Database with live and transaction datasets.
 interface DB {
   live: DataSet;
   transaction?: DataSet;
@@ -74,6 +77,7 @@ export function readJournal(db: DB, tableName: string) {
 }
 
 export function runMigrationSQL(db: DB, sql: string) {
+  // Special-case used in tests for error handling.
   if (sql.indexOf('ERROR') === 0) {
     return Promise.reject(new Error(sql));
   }

@@ -1,6 +1,5 @@
 'use strict';
 
-import R = require('ramda');
 import Promise = require('bluebird');
 import Hemp = require('hemp');
 import pg = require('pg');
@@ -8,6 +7,7 @@ Promise.promisifyAll(pg.Client.prototype);
 
 import client = require('./index');
 
+// Allow specifying a database URL instead of individual options.
 export interface Config extends pg.ClientConfig {
   url?: string
 }
@@ -23,6 +23,7 @@ export function disconnect(db: pg.Client) {
   return Promise.resolve(db.end());
 }
 
+// Run an SQL query and accumulate the result rows.
 function runQuery(db: pg.Client, sql: string, values?: any[]): Promise<pg.QueryResult> {
   var query = db.query(sql, values);
   query.on('row', (row, result) => result.addRow(row));
