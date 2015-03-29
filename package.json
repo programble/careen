@@ -27,10 +27,12 @@
   "homepage": "https://github.com/programble/careen",
   "dependencies": {
     "bluebird": "^2.9.14",
+    "hemp": "^0.1.2",
     "ramda": "^0.13.0"
   },
   "devDependencies": {
     "mocha": "^2.2.1",
+    "sqlite3": "^3.0.5",
     "typescript": "^1.4.1"
   }
 }
