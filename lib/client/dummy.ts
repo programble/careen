@@ -5,7 +5,7 @@ import Promise = require('bluebird');
 
 import client = require('./index');
 
-interface Config {
+export interface Config {
   tables?: {[s: string]: Object[]};
   sql?: string[];
 }

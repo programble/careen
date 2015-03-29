@@ -6,15 +6,15 @@ import Promise = require('bluebird');
 
 import client = require('../../lib/client/index');
 
-interface Config {
+interface Suite<T extends client.Client, U extends client.Config> {
   prettyName: string;
   skip: boolean;
-  client: client.Client;
-  createDatabase: () => Promise<{}>;
-  dropDatabase: (config: {}) => Promise<any>;
+  client: T;
+  createDatabase: () => Promise<U>;
+  dropDatabase: (config: U) => Promise<any>;
 }
 
-function suite(t: Config) {
+function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>) {
   var hooks = {
     createDatabase: function() {
       return this.config = t.createDatabase();

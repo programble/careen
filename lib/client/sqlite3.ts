@@ -7,7 +7,7 @@ Promise.promisifyAll(sqlite3.Database.prototype);
 
 import client = require('./index');
 
-interface Config {
+export interface Config {
   filename: string
 }
 
