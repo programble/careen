@@ -9,6 +9,6 @@ suite({
   prettyName: 'Dummy',
   skip: false,
   client: dummy,
-  createDatabase: function(): Promise<{}> { return Promise.resolve({}); },
-  dropDatabase: function() { return Promise.resolve(); }
+  createDatabase: () => Promise.resolve({}),
+  dropDatabase: () => Promise.resolve()
 });
