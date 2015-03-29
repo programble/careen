@@ -5,3 +5,4 @@
 /// <reference path="hemp.d.ts" />
 
 /// <reference path="sqlite3.d.ts" />
+/// <reference path="pg.d.ts" />
