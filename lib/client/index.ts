@@ -2,6 +2,7 @@
 
 import Promise = require('bluebird');
 
+export interface Config {}
 export interface Connection {}
 
 export enum Operation { apply, revert }
@@ -17,7 +18,7 @@ export interface JournalEntry extends JournalEntryIn {
 }
 
 export interface Client {
-  connect(config: {[s: string]: any}): Promise<Connection>;
+  connect(config: Config): Promise<Connection>;
   disconnect(db: Connection): Promise<any>;
 
   beginTransaction(db: Connection): Promise<any>;
