@@ -4,7 +4,7 @@ import Promise = require('bluebird');
 
 export interface Connection {}
 
-export enum Operation { apply, rollback }
+export enum Operation { apply, revert }
 
 export interface JournalEntryIn {
   operation: Operation;
