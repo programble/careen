@@ -4,8 +4,8 @@
   "description": "SQL schema migration. Nothing more. Nothing less.",
   "main": "index.js",
   "scripts": {
-    "build": "node_modules/.bin/tsc -m commonjs -t ES5 declaration/index.d.ts lib/index.ts",
-    "build-test": "node_modules/.bin/tsc -m commonjs -t ES5 declaration/index.d.ts declaration/mocha.d.ts test/client/*.ts",
+    "build": "node_modules/.bin/tsc @tsc.opts lib/index.ts",
+    "build-test": "node_modules/.bin/tsc @tsc.opts declaration/mocha.d.ts test/client/*.ts",
     "mocha": "node_modules/.bin/mocha",
     "test": "npm run build && npm run build-test && npm run mocha",
     "clean": "find lib test -name '*.js' -delete"
