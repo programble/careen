@@ -4,7 +4,7 @@
   "description": "SQL schema migration. Nothing more. Nothing less.",
   "main": "index.js",
   "scripts": {
-    "build": "node_modules/.bin/tsc @tsc.opts lib/index.ts",
+    "build": "node_modules/.bin/tsc @tsc.opts lib/*.ts",
     "build-test": "node_modules/.bin/tsc @tsc.opts declaration/mocha.d.ts test/client/*.ts",
     "mocha": "node_modules/.bin/mocha",
     "test": "npm run build && npm run build-test && npm run mocha",
@@ -28,7 +28,8 @@
   "dependencies": {
     "bluebird": "^2.9.14",
     "hemp": "^0.1.2",
-    "ramda": "^0.13.0"
+    "ramda": "^0.13.0",
+    "super-error": "^1.1.2"
   },
   "devDependencies": {
     "mocha": "^2.2.1",
