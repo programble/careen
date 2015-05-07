@@ -43,4 +43,7 @@ declare module 'ramda' {
   export function sortBy<T>(fn: (item: T) => string): (list: T[]) => T[];
 
   export function values<T>(obj: {[s: string]: T}): T[];
+
+  export function F(): boolean;
+  export function T(): boolean;
 }
