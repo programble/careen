@@ -331,6 +331,8 @@ declare class Promise<R> implements Promise.Thenable<R>, Promise.Inspection<R> {
 	filter<U>(filterer: (item: U, index: number, arrayLength: number) => Promise.Thenable<boolean>): Promise<U[]>;
 	filter<U>(filterer: (item: U, index: number, arrayLength: number) => boolean): Promise<U[]>;
 
+	each<Q>(mapper: (item: Q, index: number, arrayLength: number) => void): Promise<Q[]>;
+
 	/**
 	 * Start the chain of promises with `Promise.try`. Any synchronous exceptions will be turned into rejections on the returned promise.
 	 *

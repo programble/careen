@@ -11,182 +11,127 @@ import mockFS = require('mock-fs');
 
 import files = require('../lib/files');
 
-var hooks = {
-  mockFS: function(config: mockFS.Config) {
-    return function() {
-      mockFS(config);
-    };
-  },
-  restoreFS: function() {
-    mockFS.restore();
-  },
-  listMigrations: function() {
-    return this.migrations = files.listMigrations('migrations');
-  }
-};
-
 describe('Files', function() {
   describe('ensureDirectory', function() {
     describe('with missing directory', function() {
-      before(hooks.mockFS({}));
+      before(() => mockFS({}));
 
-      it('succeeds', function() {
-        return files.ensureDirectory('migrations');
-      });
-      it('creates directory', function() {
-        return fs.statAsync('migrations').tap(function(stats) {
-          assert(stats.isDirectory());
-        });
-      });
+      it('succeeds', () => files.ensureDirectory('migrations'));
+      it('creates directory', () =>
+        fs.statAsync('migrations')
+          .tap((stats) => assert(stats.isDirectory()))
+      );
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
 
     describe('with existing directory', function() {
-      before(hooks.mockFS({migrations: {}}));
+      before(() => mockFS({migrations: {}}));
 
-      it('succeeds', function() {
-        return files.ensureDirectory('migrations');
-      });
+      it('succeeds', () => files.ensureDirectory('migrations'));
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
   });
 
   describe('create', function() {
-    before(hooks.mockFS({migrations: {}}));
+    before(() => mockFS({migrations: {}}));
 
-    it('succeeds', function() {
-      return this.path = files.create('---\n', 'migrations', '1', 'test');
-    });
-    it('creates file', function() {
-      return this.path
-        .then(fs.statAsync.bind(fs))
-        .tap(function(stats) {
-          assert(stats.isFile());
-        });
-    });
-    it('writes template to file', function() {
-      return this.path
-        .then(function(path) {
-          return fs.readFileAsync(path, {encoding: 'utf8'});
-        })
-        .tap(function(data) {
-          assert.equal(data, '---\n');
-        });
-    });
+    var path: string;
 
-    after(hooks.restoreFS);
+    it('succeeds', () =>
+      files.create('---\n', 'migrations', '1', 'test').tap((p) => path = p)
+    );
+    it('creates file', () =>
+      fs.statAsync(path).tap((stats) => assert(stats.isFile()))
+    );
+    it('writes template to file', () =>
+      fs.readFileAsync(path, {encoding: 'utf8'})
+        .tap((data) => assert.equal(data, '---\n'))
+    );
+
+    after(mockFS.restore);
   });
 
   describe('createSplit', function() {
-    before(hooks.mockFS({migrations: {}}));
+    before(() => mockFS({migrations: {}}));
 
-    it('succeeds', function() {
-      return this.paths = files.createSplit(
-        '-- up\n', '-- down\n', 'migrations', '1', 'test'
-      );
-    });
-    it('returns paths', function() {
-      return this.paths.tap(function(paths) {
-        assert.equal(paths.length, 2);
-      });
-    });
-    it('creates files', function() {
-      return this.paths
-        .map(function(path) {
-          return fs.statAsync(path);
-        })
-        .each(function(stats) {
-          assert(stats.isFile());
-        });
-    });
-    it('writes up template to file', function() {
-      return this.paths
-        .get(0)
-        .then(function(path) {
-          return fs.readFileAsync(path, {encoding: 'utf8'});
-        })
-        .tap(function(data) {
-          assert.equal(data, '-- up\n');
-        });
-    });
-    it('writes down template to file', function() {
-      return this.paths
-        .get(1)
-        .then(function(path) {
-          return fs.readFileAsync(path, {encoding: 'utf8'});
-        })
-        .tap(function(data) {
-          assert.equal(data, '-- down\n');
-        });
-    });
+    var paths: string[];
 
-    after(hooks.restoreFS);
+    it('succeeds', () =>
+      files.createSplit('-- up\n', '-- down\n', 'migrations', '1', 'test')
+        .tap((ps) => paths = ps)
+    );
+    it('returns paths', () => assert.equal(paths.length, 2));
+    it('creates files', () =>
+      Promise.map(paths, (path) => fs.statAsync(path))
+        .each((stats: fs.Stats) => assert(stats.isFile()))
+    );
+    it('writes up template to file', () =>
+      fs.readFileAsync(paths[0], {encoding: 'utf8'})
+        .tap((sql) => assert.equal(sql, '-- up\n'))
+    );
+    it('writes down template to file', () =>
+      fs.readFileAsync(paths[1], {encoding: 'utf8'})
+        .tap((sql) => assert.equal(sql, '-- down\n'))
+    );
+
+    after(mockFS.restore);
   });
 
   describe('listMigrations', function() {
     describe('with empty directory', function() {
-      before(hooks.mockFS({migrations: {}}));
+      before(() => mockFS({migrations: {}}));
 
-      it('succeeds', function() {
-        return this.migrations = files.listMigrations('migrations');
-      });
-      it('returns empty array', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations.length, 0);
-        });
-      });
+      var migrations: files.Migration[];
 
-      after(hooks.restoreFS);
+      it('succeeds', () =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+      it('returns empty array', () => assert.equal(migrations.length, 0));
+
+      after(mockFS.restore);
     });
 
     describe('with migration files', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
           '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n'
         }
       }));
 
-      it('succeeds', function() {
-        return this.migrations = files.listMigrations('migrations');
-      });
+      var migrations: files.Migration[];
+
+      it('succeeds', () =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
       it('returns array of migrations sorted by ID', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations.length, 2);
-          assert(migrations[0].id < migrations[1].id);
-        });
+        assert.equal(migrations.length, 2);
+        assert(migrations[0].id < migrations[1].id);
       });
       it('returns migration IDs', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations[0].id, '1');
-          assert.equal(migrations[1].id, '2');
-        });
+        assert.equal(migrations[0].id, '1');
+        assert.equal(migrations[1].id, '2');
       });
       it('returns migration names', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations[0].name, 'first');
-          assert.equal(migrations[1].name, 'second');
-        });
+        assert.equal(migrations[0].name, 'first');
+        assert.equal(migrations[1].name, 'second');
       });
       it('returns migration split false', function() {
-        return this.migrations.each(function(migration) {
-          assert.equal(migration.split, false);
-        });
+        assert.equal(migrations[0].split, false);
+        assert.equal(migrations[1].split, false);
       });
       it('returns migration paths', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations[0].path, path.join('migrations', '1.first.sql'));
-          assert.equal(migrations[1].path, path.join('migrations', '2.second.sql'));
-        });
+        assert.equal(migrations[0].path, path.join('migrations', '1.first.sql'));
+        assert.equal(migrations[1].path, path.join('migrations', '2.second.sql'));
       });
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
 
     describe('with non-migration files', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.sql': 'CREATE TABLE a (a INTEGER);\n',
           '1.test.left.sql': 'invalid name',
@@ -197,20 +142,20 @@ describe('Files', function() {
         }
       }));
 
-      it('succeeds', function() {
-        return this.migrations = files.listMigrations('migrations');
-      });
-      it('does not return non-migrations', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations.length, 1);
-        });
-      });
+      var migrations: files.Migration[];
 
-      after(hooks.restoreFS);
+      it('succeeds', () =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+      it('does not return non-migrations', () =>
+        assert.equal(migrations.length, 1)
+      );
+
+      after(mockFS.restore);
     });
 
     describe('with split migration files', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.first.up.sql': 'CREATE TABLE a (a INTEGER);\n',
           '1.first.down.sql': 'DROP TABLE a;\n',
@@ -219,85 +164,76 @@ describe('Files', function() {
         }
       }));
 
-      it('succeeds', function() {
-        return this.migrations = files.listMigrations('migrations');
-      });
+      var migrations: files.Migration[];
+
+      it('succeeds', () =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
       it('returns array of migrations sorted by ID', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations.length, 2);
-          assert(migrations[0].id < migrations[1].id);
-        });
+        assert.equal(migrations.length, 2);
+        assert(migrations[0].id < migrations[1].id);
       });
       it('returns migration IDs', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations[0].id, '1');
-          assert.equal(migrations[1].id, '2');
-        });
+        assert.equal(migrations[0].id, '1');
+        assert.equal(migrations[1].id, '2');
       });
       it('returns migration names', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations[0].name, 'first');
-          assert.equal(migrations[1].name, 'second');
-        });
+        assert.equal(migrations[0].name, 'first');
+        assert.equal(migrations[1].name, 'second');
       });
       it('returns migration split true', function() {
-        return this.migrations.each(function(migration) {
-          assert.equal(migration.split, true);
-        });
+        assert.equal(migrations[0].split, true);
+        assert.equal(migrations[1].split, true);
       });
       it('returns up migration paths', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations[0].upPath, path.join('migrations', '1.first.up.sql'));
-          assert.equal(migrations[1].upPath, path.join('migrations', '2.second.up.sql'));
-        });
+        assert.equal(migrations[0].upPath, path.join('migrations', '1.first.up.sql'));
+        assert.equal(migrations[1].upPath, path.join('migrations', '2.second.up.sql'));
       });
       it('returns down migration paths', function() {
-        return this.migrations.tap(function(migrations) {
-          assert.equal(migrations[0].downPath, path.join('migrations', '1.first.down.sql'));
-          assert.equal(migrations[1].downPath, path.join('migrations', '2.second.down.sql'));
-        });
+        assert.equal(migrations[0].downPath, path.join('migrations', '1.first.down.sql'));
+        assert.equal(migrations[1].downPath, path.join('migrations', '2.second.down.sql'));
       });
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
 
     describe('with missing split migration file', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.up.sql': 'CREATE TABLE a (a INTEGER);\n'
         }
       }));
 
-      it('throws SplitFileMissingError', function() {
-        return files.listMigrations('migrations')
+      it('throws SplitFileMissingError', () =>
+        files.listMigrations('migrations')
           .then(R.F)
           .catch(files.SplitFileMissingError, R.T)
-          .then(assert);
-      });
+          .then(assert)
+      );
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
 
     describe('with two split migration files of same type', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.up.sql': 'CREATE TABLE a (a INTEGER);\n',
           '1.what.up.sql': 'CREATE TABLE a (b INTEGER);\n'
         }
       }));
 
-      it('throws SplitFileMissingError', function() {
-        return files.listMigrations('migrations')
+      it('throws SplitFileMissingError', () =>
+        files.listMigrations('migrations')
           .then(R.F)
           .catch(files.SplitFileMissingError, R.T)
-          .then(assert);
-      });
+          .then(assert)
+      );
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
 
     describe('with conflicting migration files', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
           '1.test.up.sql': 'CREATE TABLE a (a INTEGER);\n',
@@ -305,188 +241,208 @@ describe('Files', function() {
         }
       }));
 
-      it('throws SplitFileConflictError', function() {
-        return files.listMigrations('migrations')
+      it('throws SplitFileConflictError', () =>
+        files.listMigrations('migrations')
           .then(R.F)
           .catch(files.SplitFileConflictError, R.T)
-          .then(assert);
-      });
+          .then(assert)
+      );
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
   });
 
   describe('readUpSQL', function() {
     describe('with split migration files', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.up.sql': 'CREATE TABLE a (a INTEGER);\n',
           '1.test.down.sql': 'DROP TABLE a;\n'
         }
       }));
-      before(hooks.listMigrations);
 
-      it('succeeds', function() {
-        return this.upSQL = this.migrations
-          .then(R.nth(0))
-          .then(files.readUpSQL);
-      });
-      it('reads up SQL', function() {
-        return this.upSQL.tap(function(sql) {
-          assert.equal(sql, 'CREATE TABLE a (a INTEGER);');
-        });
-      });
+      var migrations: files.Migration[];
+      var upSQL: string;
 
-      after(hooks.restoreFS);
+      before(() =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+
+      it('succeeds', () =>
+        files.readUpSQL(migrations[0]).tap((s) => upSQL = s)
+      );
+      it('reads up SQL', () =>
+        assert.equal(upSQL, 'CREATE TABLE a (a INTEGER);')
+      );
+
+      after(mockFS.restore);
     });
 
     describe('with non-split migration files', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n'
         }
       }));
-      before(hooks.listMigrations);
 
-      it('succeeds', function() {
-        return this.upSQL = this.migrations
-          .then(R.nth(0))
-          .then(files.readUpSQL);
-      });
-      it('reads up SQL', function() {
-        return this.upSQL.tap(function(sql) {
-          assert.equal(sql, 'CREATE TABLE a (a INTEGER);');
-        });
-      });
+      var migrations: files.Migration[];
+      var upSQL: string;
 
-      after(hooks.restoreFS);
+      before(() =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+
+      it('succeeds', () =>
+        files.readUpSQL(migrations[0]).tap((s) => upSQL = s)
+      );
+      it('reads up SQL', () =>
+        assert.equal(upSQL, 'CREATE TABLE a (a INTEGER);')
+      );
+
+      after(mockFS.restore);
     });
 
     describe('with missing SQL section', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.sql': 'CREATE TABLE a (a INTEGER);\n'
         }
       }));
-      before(hooks.listMigrations);
 
-      it('throws SQLMissingError', function() {
-        return this.migrations
-          .then(R.nth(0))
-          .then(files.readUpSQL)
+      var migrations: files.Migration[];
+
+      before(() =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+
+      it('throws SQLMissingError', () =>
+        files.readUpSQL(migrations[0])
           .then(R.F)
           .catch(files.SQLMissingError, R.T)
-          .then(assert);
-      });
+          .then(assert)
+      );
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
 
     describe('with conflicting SQL sections', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.sql': 'CREATE TABLE a (a INTEGER);\n---\n---\nDROP TABLE a;\n'
         }
       }));
-      before(hooks.listMigrations);
 
-      it('throws SQLConflictError', function() {
-        return this.migrations
-          .then(R.nth(0))
-          .then(files.readUpSQL)
+      var migrations: files.Migration[];
+
+      before(() =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+
+      it('throws SQLConflictError', () =>
+        files.readUpSQL(migrations[0])
           .then(R.F)
           .catch(files.SQLConflictError, R.T)
-          .then(assert);
-      });
+          .then(assert)
+      );
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
   });
 
   describe('readDownSQL', function() {
     describe('with split migration files', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.up.sql': 'CREATE TABLE a (a INTEGER);\n',
           '1.test.down.sql': 'DROP TABLE a;\n'
         }
       }));
-      before(hooks.listMigrations);
 
-      it('succeeds', function() {
-        return this.downSQL = this.migrations
-          .then(R.nth(0))
-          .then(files.readDownSQL);
-      });
-      it('reads down SQL', function() {
-        return this.downSQL.tap(function(sql) {
-          assert.equal(sql, 'DROP TABLE a;');
-        });
-      });
+      var migrations: files.Migration[];
+      var downSQL: string;
 
-      after(hooks.restoreFS);
+      before(() =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+
+      it('succeeds', () =>
+        files.readDownSQL(migrations[0]).tap((s) => downSQL = s)
+      );
+      it('reads down SQL', () =>
+        assert.equal(downSQL, 'DROP TABLE a;')
+      );
+
+      after(mockFS.restore);
     });
 
     describe('with non-split migration files', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n'
         }
       }));
-      before(hooks.listMigrations);
 
-      it('succeeds', function() {
-        return this.downSQL = this.migrations
-          .then(R.nth(0))
-          .then(files.readDownSQL);
-      });
-      it('reads down SQL', function() {
-        return this.downSQL.tap(function(sql) {
-          assert.equal(sql, 'DROP TABLE a;');
-        });
-      });
+      var migrations: files.Migration[];
+      var downSQL: string;
 
-      after(hooks.restoreFS);
+      before(() =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+
+      it('succeeds', () =>
+        files.readDownSQL(migrations[0]).tap((s) => downSQL = s)
+      );
+      it('reads down SQL', () =>
+        assert.equal(downSQL, 'DROP TABLE a;')
+      );
+
+      after(mockFS.restore);
     });
 
     describe('with missing SQL section', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.sql': 'CREATE TABLE a (a INTEGER);\n'
         }
       }));
-      before(hooks.listMigrations);
 
-      it('throws SQLMissingError', function() {
-        return this.migrations
-          .then(R.nth(0))
-          .then(files.readDownSQL)
+      var migrations: files.Migration[];
+
+      before(() =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+
+      it('throws SQLMissingError', () =>
+        files.readDownSQL(migrations[0])
           .then(R.F)
           .catch(files.SQLMissingError, R.T)
-          .then(assert);
-      });
+          .then(assert)
+      );
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
 
     describe('with conflicting SQL sections', function() {
-      before(hooks.mockFS({
+      before(() => mockFS({
         migrations: {
           '1.test.sql': 'CREATE TABLE a (a INTEGER);\n---\n---\nDROP TABLE a;\n'
         }
       }));
-      before(hooks.listMigrations);
 
-      it('throws SQLConflictError', function() {
-        return this.migrations
-          .then(R.nth(0))
-          .then(files.readDownSQL)
+      var migrations: files.Migration[];
+
+      before(() =>
+        files.listMigrations('migrations').tap((ms) => migrations = ms)
+      );
+
+      it('throws SQLConflictError', () =>
+        files.readDownSQL(migrations[0])
           .then(R.F)
           .catch(files.SQLConflictError, R.T)
-          .then(assert);
-      });
+          .then(assert)
+      );
 
-      after(hooks.restoreFS);
+      after(mockFS.restore);
     });
   });
 });
