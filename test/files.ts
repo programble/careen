@@ -17,6 +17,7 @@ describe('Files', function() {
       before(() => mockFS({}));
 
       it('succeeds', () => files.ensureDirectory('migrations'));
+
       it('creates directory', () =>
         fs.statAsync('migrations')
           .tap((stats) => assert(stats.isDirectory()))
@@ -42,9 +43,11 @@ describe('Files', function() {
     it('succeeds', () =>
       files.create('---\n', 'migrations', '1', 'test').tap((p) => path = p)
     );
+
     it('creates file', () =>
       fs.statAsync(path).tap((stats) => assert(stats.isFile()))
     );
+
     it('writes template to file', () =>
       fs.readFileAsync(path, {encoding: 'utf8'})
         .tap((data) => assert.equal(data, '---\n'))
@@ -62,15 +65,19 @@ describe('Files', function() {
       files.createSplit('-- up\n', '-- down\n', 'migrations', '1', 'test')
         .tap((ps) => paths = ps)
     );
+
     it('returns paths', () => assert.equal(paths.length, 2));
+
     it('creates files', () =>
       Promise.map(paths, (path) => fs.statAsync(path))
         .each((stats: fs.Stats) => assert(stats.isFile()))
     );
+
     it('writes up template to file', () =>
       fs.readFileAsync(paths[0], {encoding: 'utf8'})
         .tap((sql) => assert.equal(sql, '-- up\n'))
     );
+
     it('writes down template to file', () =>
       fs.readFileAsync(paths[1], {encoding: 'utf8'})
         .tap((sql) => assert.equal(sql, '-- down\n'))
@@ -88,6 +95,7 @@ describe('Files', function() {
       it('succeeds', () =>
         files.listMigrations('migrations').tap((ms) => migrations = ms)
       );
+
       it('returns empty array', () => assert.equal(migrations.length, 0));
 
       after(mockFS.restore);
@@ -106,22 +114,27 @@ describe('Files', function() {
       it('succeeds', () =>
         files.listMigrations('migrations').tap((ms) => migrations = ms)
       );
+
       it('returns array of migrations sorted by ID', function() {
         assert.equal(migrations.length, 2);
         assert(migrations[0].id < migrations[1].id);
       });
+
       it('returns migration IDs', function() {
         assert.equal(migrations[0].id, '1');
         assert.equal(migrations[1].id, '2');
       });
+
       it('returns migration names', function() {
         assert.equal(migrations[0].name, 'first');
         assert.equal(migrations[1].name, 'second');
       });
+
       it('returns migration split false', function() {
         assert.equal(migrations[0].split, false);
         assert.equal(migrations[1].split, false);
       });
+
       it('returns migration paths', function() {
         assert.equal(migrations[0].path, path.join('migrations', '1.first.sql'));
         assert.equal(migrations[1].path, path.join('migrations', '2.second.sql'));
@@ -147,6 +160,7 @@ describe('Files', function() {
       it('succeeds', () =>
         files.listMigrations('migrations').tap((ms) => migrations = ms)
       );
+
       it('does not return non-migrations', () =>
         assert.equal(migrations.length, 1)
       );
@@ -169,26 +183,32 @@ describe('Files', function() {
       it('succeeds', () =>
         files.listMigrations('migrations').tap((ms) => migrations = ms)
       );
+
       it('returns array of migrations sorted by ID', function() {
         assert.equal(migrations.length, 2);
         assert(migrations[0].id < migrations[1].id);
       });
+
       it('returns migration IDs', function() {
         assert.equal(migrations[0].id, '1');
         assert.equal(migrations[1].id, '2');
       });
+
       it('returns migration names', function() {
         assert.equal(migrations[0].name, 'first');
         assert.equal(migrations[1].name, 'second');
       });
+
       it('returns migration split true', function() {
         assert.equal(migrations[0].split, true);
         assert.equal(migrations[1].split, true);
       });
+
       it('returns up migration paths', function() {
         assert.equal(migrations[0].upPath, path.join('migrations', '1.first.up.sql'));
         assert.equal(migrations[1].upPath, path.join('migrations', '2.second.up.sql'));
       });
+
       it('returns down migration paths', function() {
         assert.equal(migrations[0].downPath, path.join('migrations', '1.first.down.sql'));
         assert.equal(migrations[1].downPath, path.join('migrations', '2.second.down.sql'));
@@ -271,6 +291,7 @@ describe('Files', function() {
       it('succeeds', () =>
         files.readUpSQL(migrations[0]).tap((s) => upSQL = s)
       );
+
       it('reads up SQL', () =>
         assert.equal(upSQL, 'CREATE TABLE a (a INTEGER);')
       );
@@ -295,6 +316,7 @@ describe('Files', function() {
       it('succeeds', () =>
         files.readUpSQL(migrations[0]).tap((s) => upSQL = s)
       );
+
       it('reads up SQL', () =>
         assert.equal(upSQL, 'CREATE TABLE a (a INTEGER);')
       );
@@ -368,6 +390,7 @@ describe('Files', function() {
       it('succeeds', () =>
         files.readDownSQL(migrations[0]).tap((s) => downSQL = s)
       );
+
       it('reads down SQL', () =>
         assert.equal(downSQL, 'DROP TABLE a;')
       );
@@ -392,6 +415,7 @@ describe('Files', function() {
       it('succeeds', () =>
         files.readDownSQL(migrations[0]).tap((s) => downSQL = s)
       );
+
       it('reads down SQL', () =>
         assert.equal(downSQL, 'DROP TABLE a;')
       );
