@@ -27,8 +27,9 @@ export function createSplit(
   var downPath = path.join(directory, downName);
   return Promise.join(
     fs.writeFileAsync(upPath, upTemplate, {flag: 'wx'}),
-    fs.writeFileAsync(downPath, downTemplate, {flag: 'wx'})
-  ).return([upPath, downPath]);
+    fs.writeFileAsync(downPath, downTemplate, {flag: 'wx'}),
+    () => [upPath, downPath]
+  );
 }
 
 export interface Migration {

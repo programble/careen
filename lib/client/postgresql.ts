@@ -28,8 +28,8 @@ function runQuery(db: pg.Client, sql: string, values?: any[]): Promise<pg.QueryR
   var query = db.query(sql, values);
   query.on('row', (row, result) => result.addRow(row));
   return new Promise(function(
-    resolve: (result: pg.QueryResult) => void,
-    reject: (error: any) => void
+    resolve: (value: pg.QueryResult) => void,
+    reject: (reason: any) => void
   ) {
     query.once('error', reject);
     query.once('end', resolve);
