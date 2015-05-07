@@ -20,8 +20,8 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
   var db: client.Connection;
 
   var hooks = {
-    createDatabase:   () => t.createDatabase().tap((c) => config = c),
-    connect:          () => t.client.connect(config).tap((c) => db = c),
+    createDatabase:   () => t.createDatabase().tap(c => config = c),
+    connect:          () => t.client.connect(config).tap(c => db = c),
     beginTransaction: () => t.client.beginTransaction(db),
     ensureJournal:    () => t.client.ensureJournal(db, 'journal'),
     disconnect:       () => t.client.disconnect(db),
@@ -33,7 +33,7 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
       before(hooks.createDatabase);
 
       it('succeeds', () =>
-        t.client.connect(config).tap((c) => db = c)
+        t.client.connect(config).tap(c => db = c)
       );
 
       after(hooks.disconnect);
@@ -157,7 +157,7 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
         var entries: client.JournalEntry[];
 
         it('succeeds', () =>
-          t.client.readJournal(db, 'journal').tap((es) => entries = es)
+          t.client.readJournal(db, 'journal').tap(es => entries = es)
         );
 
         it('returns empty array', () => assert.equal(entries.length, 0));
@@ -182,7 +182,7 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
         var entries: client.JournalEntry[];
 
         it('succeeds', () =>
-          t.client.readJournal(db, 'journal').tap((es) => entries = es)
+          t.client.readJournal(db, 'journal').tap(es => entries = es)
         );
 
         it('returns array of one object', function() {
@@ -234,7 +234,7 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
         var entries: client.JournalEntry[];
 
         it('succeeds', () =>
-          t.client.readJournal(db, 'journal').tap((es) => entries = es)
+          t.client.readJournal(db, 'journal').tap(es => entries = es)
         );
 
         it('returns ordered entries', function() {

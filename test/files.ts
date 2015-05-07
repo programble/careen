@@ -20,7 +20,7 @@ describe('Files', function() {
 
       it('creates directory', () =>
         fs.statAsync('migrations')
-          .tap((stats) => assert(stats.isDirectory()))
+          .tap(stats => assert(stats.isDirectory()))
       );
 
       after(mockFS.restore);
@@ -41,16 +41,16 @@ describe('Files', function() {
     var path: string;
 
     it('succeeds', () =>
-      files.create('---\n', 'migrations', '1', 'test').tap((p) => path = p)
+      files.create('---\n', 'migrations', '1', 'test').tap(p => path = p)
     );
 
     it('creates file', () =>
-      fs.statAsync(path).tap((stats) => assert(stats.isFile()))
+      fs.statAsync(path).tap(stats => assert(stats.isFile()))
     );
 
     it('writes template to file', () =>
       fs.readFileAsync(path, {encoding: 'utf8'})
-        .tap((data) => assert.equal(data, '---\n'))
+        .tap(data => assert.equal(data, '---\n'))
     );
 
     after(mockFS.restore);
@@ -63,24 +63,24 @@ describe('Files', function() {
 
     it('succeeds', () =>
       files.createSplit('-- up\n', '-- down\n', 'migrations', '1', 'test')
-        .tap((ps) => paths = ps)
+        .tap(ps => paths = ps)
     );
 
     it('returns paths', () => assert.equal(paths.length, 2));
 
     it('creates files', () =>
-      Promise.map(paths, (path) => fs.statAsync(path))
+      Promise.map(paths, path => fs.statAsync(path))
         .each((stats: fs.Stats) => assert(stats.isFile()))
     );
 
     it('writes up template to file', () =>
       fs.readFileAsync(paths[0], {encoding: 'utf8'})
-        .tap((sql) => assert.equal(sql, '-- up\n'))
+        .tap(sql => assert.equal(sql, '-- up\n'))
     );
 
     it('writes down template to file', () =>
       fs.readFileAsync(paths[1], {encoding: 'utf8'})
-        .tap((sql) => assert.equal(sql, '-- down\n'))
+        .tap(sql => assert.equal(sql, '-- down\n'))
     );
 
     after(mockFS.restore);
@@ -93,7 +93,7 @@ describe('Files', function() {
       var migrations: files.Migration[];
 
       it('succeeds', () =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('returns empty array', () => assert.equal(migrations.length, 0));
@@ -112,7 +112,7 @@ describe('Files', function() {
       var migrations: files.Migration[];
 
       it('succeeds', () =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('returns array of migrations sorted by ID', function() {
@@ -158,7 +158,7 @@ describe('Files', function() {
       var migrations: files.Migration[];
 
       it('succeeds', () =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('does not return non-migrations', () =>
@@ -181,7 +181,7 @@ describe('Files', function() {
       var migrations: files.Migration[];
 
       it('succeeds', () =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('returns array of migrations sorted by ID', function() {
@@ -285,11 +285,11 @@ describe('Files', function() {
       var upSQL: string;
 
       before(() =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('succeeds', () =>
-        files.readUpSQL(migrations[0]).tap((s) => upSQL = s)
+        files.readUpSQL(migrations[0]).tap(s => upSQL = s)
       );
 
       it('reads up SQL', () =>
@@ -310,11 +310,11 @@ describe('Files', function() {
       var upSQL: string;
 
       before(() =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('succeeds', () =>
-        files.readUpSQL(migrations[0]).tap((s) => upSQL = s)
+        files.readUpSQL(migrations[0]).tap(s => upSQL = s)
       );
 
       it('reads up SQL', () =>
@@ -334,7 +334,7 @@ describe('Files', function() {
       var migrations: files.Migration[];
 
       before(() =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('throws SQLMissingError', () =>
@@ -357,7 +357,7 @@ describe('Files', function() {
       var migrations: files.Migration[];
 
       before(() =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('throws SQLConflictError', () =>
@@ -384,11 +384,11 @@ describe('Files', function() {
       var downSQL: string;
 
       before(() =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('succeeds', () =>
-        files.readDownSQL(migrations[0]).tap((s) => downSQL = s)
+        files.readDownSQL(migrations[0]).tap(s => downSQL = s)
       );
 
       it('reads down SQL', () =>
@@ -409,11 +409,11 @@ describe('Files', function() {
       var downSQL: string;
 
       before(() =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('succeeds', () =>
-        files.readDownSQL(migrations[0]).tap((s) => downSQL = s)
+        files.readDownSQL(migrations[0]).tap(s => downSQL = s)
       );
 
       it('reads down SQL', () =>
@@ -433,7 +433,7 @@ describe('Files', function() {
       var migrations: files.Migration[];
 
       before(() =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('throws SQLMissingError', () =>
@@ -456,7 +456,7 @@ describe('Files', function() {
       var migrations: files.Migration[];
 
       before(() =>
-        files.listMigrations('migrations').tap((ms) => migrations = ms)
+        files.listMigrations('migrations').tap(ms => migrations = ms)
       );
 
       it('throws SQLConflictError', () =>

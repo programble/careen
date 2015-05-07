@@ -77,7 +77,7 @@ export function readJournal(db: pg.Client, tableName: string) {
     ('SELECT * FROM', tableName)
     ('ORDER BY timestamp');
   return runQuery(db, sql.toString())
-    .then((result) => result.rows)
+    .then(result => result.rows)
     .map(function(row: any): client.JournalEntry {
       return {
         timestamp: new Date(row.timestamp),
