@@ -12,7 +12,10 @@ export interface Config {
 }
 
 export function connect(config: Config) {
-  return new Promise(function(resolve: (result: sqlite3.Database) => void, reject) {
+  return new Promise(function(
+    resolve: (result: sqlite3.Database) => void,
+    reject: (error: any) => void
+  ) {
     var db = new sqlite3.Database(config.filename);
     db.once('error', reject);
     db.once('open', () => resolve(db));
@@ -67,7 +70,8 @@ export function readJournal(db: sqlite3.Database, tableName: string) {
     .map(function(row: any): client.JournalEntry {
       return {
         timestamp: new Date(row.timestamp),
-        operation: client.Operation[<string> row.operation],
+        // TypeScript doesn't admit that its enums are indexable.
+        operation: <any> client.Operation[row.operation],
         migrationID: <string> row.migration_id,
         migrationName: <string> row.migration_name
       };

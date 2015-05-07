@@ -27,7 +27,10 @@ export function disconnect(db: pg.Client) {
 function runQuery(db: pg.Client, sql: string, values?: any[]): Promise<pg.QueryResult> {
   var query = db.query(sql, values);
   query.on('row', (row, result) => result.addRow(row));
-  return new Promise(function(resolve: (result: pg.QueryResult) => void, reject) {
+  return new Promise(function(
+    resolve: (result: pg.QueryResult) => void,
+    reject: (error: any) => void
+  ) {
     query.once('error', reject);
     query.once('end', resolve);
   });
@@ -78,7 +81,8 @@ export function readJournal(db: pg.Client, tableName: string) {
     .map(function(row: any): client.JournalEntry {
       return {
         timestamp: new Date(row.timestamp),
-        operation: client.Operation[<string> row.operation],
+        // TypeScript doesn't admit that its enums are indexable.
+        operation: <any> client.Operation[row.operation],
         migrationID: <string> row.migration_id,
         migrationName: <string> row.migration_name
       };

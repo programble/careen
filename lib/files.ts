@@ -94,20 +94,22 @@ export function listMigrations(directory: string): Promise<Migration[]> {
     .then(R.groupBy(R.nth<string>(1)))
     .then(R.mapObj(R.partial(matchesToMigration, directory)))
     .then(R.values)
-    .then(R.sortBy(function(migration: Migration) {
-      return migration.id;
-    }));
+    .then(R.sortBy((migration: Migration) => migration.id));
 }
 
 var MIGRATION_SQL_SPLIT_REGEXP = /^-{3,}$/m;
 
-export var SQLMissingError = SuperError.subclass('SQLMissingError', function(path) {
-  this.message = 'SQL section missing in migration file: ' + path;
-});
+export var SQLMissingError = SuperError.subclass(
+  'SQLMissingError', function(path: string) {
+    this.message = 'SQL section missing in migration file: ' + path;
+  }
+);
 
-export var SQLConflictError = SuperError.subclass('SQLConflictError', function(path) {
-  this.message = 'Too many SQL sections in migration file: ' + path;
-});
+export var SQLConflictError = SuperError.subclass(
+  'SQLConflictError', function(path: string) {
+    this.message = 'Too many SQL sections in migration file: ' + path;
+  }
+);
 
 function assertSQLSections(migration: Migration, sections: string[]): void {
   if (sections.length < 2) {
