@@ -1,3 +1,4 @@
 --target ES5
 --module commonjs
+--noImplicitAny
 declaration/index.d.ts
