@@ -72,7 +72,7 @@ function matchesToMigration(directory: string, matches: RegExpMatchArray[]): Mig
     var downMatch = R.find(R.propEq(3, 'down'), matches);
 
     if (!upMatch) throw new SplitFileMissingError(downMatch[0]);
-    if (!downMatch) throw new SplitFileMissingError(downMatch[1]);
+    if (!downMatch) throw new SplitFileMissingError(upMatch[0]);
 
     return {
       id: upMatch[1],
