@@ -315,4 +315,178 @@ describe('Files', function() {
       after(hooks.restoreFS);
     });
   });
+
+  describe('readUpSQL', function() {
+    describe('with split migration files', function() {
+      before(hooks.mockFS({
+        migrations: {
+          '1.test.up.sql': 'CREATE TABLE a (a INTEGER);\n',
+          '1.test.down.sql': 'DROP TABLE a;\n'
+        }
+      }));
+      before(hooks.listMigrations);
+
+      it('succeeds', function() {
+        return this.upSQL = this.migrations
+          .then(R.nth(0))
+          .then(files.readUpSQL);
+      });
+      it('reads up SQL', function() {
+        return this.upSQL.tap(function(sql) {
+          assert.equal(sql, 'CREATE TABLE a (a INTEGER);');
+        });
+      });
+
+      after(hooks.restoreFS);
+    });
+
+    describe('with non-split migration files', function() {
+      before(hooks.mockFS({
+        migrations: {
+          '1.test.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n'
+        }
+      }));
+      before(hooks.listMigrations);
+
+      it('succeeds', function() {
+        return this.upSQL = this.migrations
+          .then(R.nth(0))
+          .then(files.readUpSQL);
+      });
+      it('reads up SQL', function() {
+        return this.upSQL.tap(function(sql) {
+          assert.equal(sql, 'CREATE TABLE a (a INTEGER);');
+        });
+      });
+
+      after(hooks.restoreFS);
+    });
+
+    describe('with missing SQL section', function() {
+      before(hooks.mockFS({
+        migrations: {
+          '1.test.sql': 'CREATE TABLE a (a INTEGER);\n'
+        }
+      }));
+      before(hooks.listMigrations);
+
+      it('throws SQLMissingError', function() {
+        return this.migrations
+          .then(R.nth(0))
+          .then(files.readUpSQL)
+          .then(R.F)
+          .catch(files.SQLMissingError, R.T)
+          .then(assert);
+      });
+
+      after(hooks.restoreFS);
+    });
+
+    describe('with conflicting SQL sections', function() {
+      before(hooks.mockFS({
+        migrations: {
+          '1.test.sql': 'CREATE TABLE a (a INTEGER);\n---\n---\nDROP TABLE a;\n'
+        }
+      }));
+      before(hooks.listMigrations);
+
+      it('throws SQLConflictError', function() {
+        return this.migrations
+          .then(R.nth(0))
+          .then(files.readUpSQL)
+          .then(R.F)
+          .catch(files.SQLConflictError, R.T)
+          .then(assert);
+      });
+
+      after(hooks.restoreFS);
+    });
+  });
+
+  describe('readDownSQL', function() {
+    describe('with split migration files', function() {
+      before(hooks.mockFS({
+        migrations: {
+          '1.test.up.sql': 'CREATE TABLE a (a INTEGER);\n',
+          '1.test.down.sql': 'DROP TABLE a;\n'
+        }
+      }));
+      before(hooks.listMigrations);
+
+      it('succeeds', function() {
+        return this.downSQL = this.migrations
+          .then(R.nth(0))
+          .then(files.readDownSQL);
+      });
+      it('reads down SQL', function() {
+        return this.downSQL.tap(function(sql) {
+          assert.equal(sql, 'DROP TABLE a;');
+        });
+      });
+
+      after(hooks.restoreFS);
+    });
+
+    describe('with non-split migration files', function() {
+      before(hooks.mockFS({
+        migrations: {
+          '1.test.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n'
+        }
+      }));
+      before(hooks.listMigrations);
+
+      it('succeeds', function() {
+        return this.downSQL = this.migrations
+          .then(R.nth(0))
+          .then(files.readDownSQL);
+      });
+      it('reads down SQL', function() {
+        return this.downSQL.tap(function(sql) {
+          assert.equal(sql, 'DROP TABLE a;');
+        });
+      });
+
+      after(hooks.restoreFS);
+    });
+
+    describe('with missing SQL section', function() {
+      before(hooks.mockFS({
+        migrations: {
+          '1.test.sql': 'CREATE TABLE a (a INTEGER);\n'
+        }
+      }));
+      before(hooks.listMigrations);
+
+      it('throws SQLMissingError', function() {
+        return this.migrations
+          .then(R.nth(0))
+          .then(files.readDownSQL)
+          .then(R.F)
+          .catch(files.SQLMissingError, R.T)
+          .then(assert);
+      });
+
+      after(hooks.restoreFS);
+    });
+
+    describe('with conflicting SQL sections', function() {
+      before(hooks.mockFS({
+        migrations: {
+          '1.test.sql': 'CREATE TABLE a (a INTEGER);\n---\n---\nDROP TABLE a;\n'
+        }
+      }));
+      before(hooks.listMigrations);
+
+      it('throws SQLConflictError', function() {
+        return this.migrations
+          .then(R.nth(0))
+          .then(files.readDownSQL)
+          .then(R.F)
+          .catch(files.SQLConflictError, R.T)
+          .then(assert);
+      });
+
+      after(hooks.restoreFS);
+    });
+  });
 });
