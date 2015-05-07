@@ -147,6 +147,9 @@ declare class Promise<T> implements Promise.Thenable<T> {
     handler: (reason: any) => U
   ): Promise<U>;
 
+  finally<U>(handler: () => Promise.Thenable<U>): Promise<T>;
+  finally<U>(handler: () => U): Promise<T>;
+
   map<U, V>(
     mapper: (item: V, index: number, arrayLength: number) => Promise.Thenable<U>,
     options?: Promise.MapOptions
@@ -177,6 +180,20 @@ declare class Promise<T> implements Promise.Thenable<T> {
 
   return<U>(value: Promise.Thenable<U>): Promise<U>;
   return<U>(value: U): Promise<U>;
+
+  throw(reason: any): Promise<void>;
+
+  disposer<U>(disposer: (value: T) => Promise.Thenable<U>): Promise.Disposer<T>;
+  disposer<U>(disposer: (value: T) => U): Promise.Disposer<T>;
+
+  static using<T, U>(
+    promise: Promise.Disposer<T>,
+    handler: (value: T) => Promise.Thenable<U>
+  ): Promise<U>;
+  static using<T, U>(
+    promise: Promise.Disposer<T>,
+    handler: (value: T) => U
+  ): Promise<U>;
 }
 
 declare module Promise {
@@ -215,6 +232,9 @@ declare module Promise {
 
   export interface MapOptions {
     concurrency?: number
+  }
+
+  export class Disposer<T> extends Promise<T> {
   }
 }
 
