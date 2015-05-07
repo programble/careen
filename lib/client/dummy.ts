@@ -29,9 +29,7 @@ export function connect(config: Config): Promise<DB> {
     live: {
       tables: config.tables || {},
       sql: config.sql || []
-    },
-    transaction: null,
-    rollback: null
+    }
   });
 }
 
