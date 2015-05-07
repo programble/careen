@@ -3,5 +3,5 @@ node_js:
   - "0.10"
   - "0.12"
   - iojs-v1
-  # - iojs-v2 # waiting on tschaub/mock-fs#38
+  - iojs-v2
 script: npm test
