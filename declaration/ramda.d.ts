@@ -42,6 +42,11 @@ declare module 'ramda' {
   export function sortBy<T>(fn: (item: T) => string, list: T[]): T[];
   export function sortBy<T>(fn: (item: T) => string): (list: T[]) => T[];
 
+  export function split(sep: string | RegExp, str: string): string[];
+  export function split(sep: string | RegExp): (str: string) => string[];
+
+  export function trim(str: string): string;
+
   export function values<T>(obj: {[s: string]: T}): T[];
 
   export function F(): boolean;

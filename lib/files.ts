@@ -98,3 +98,45 @@ export function listMigrations(directory: string): Promise<Migration[]> {
       return migration.id;
     }));
 }
+
+var MIGRATION_SQL_SPLIT_REGEXP = /^-{3,}$/m;
+
+export var SQLMissingError = SuperError.subclass('SQLMissingError', function(path) {
+  this.message = 'SQL section missing in migration file: ' + path;
+});
+
+export var SQLConflictError = SuperError.subclass('SQLConflictError', function(path) {
+  this.message = 'Too many SQL sections in migration file: ' + path;
+});
+
+function assertSQLSections(migration: Migration, sections: string[]): void {
+  if (sections.length < 2) {
+    throw new SQLMissingError(migration.path);
+  } else if (sections.length > 2) {
+    throw new SQLConflictError(migration.path);
+  }
+}
+
+export function readUpSQL(migration: Migration): Promise<string> {
+  if (migration.split) {
+    return fs.readFileAsync(migration.upPath, {encoding: 'utf8'})
+      .then(R.trim);
+  }
+  return fs.readFileAsync(migration.path, {encoding: 'utf8'})
+    .then(R.split(MIGRATION_SQL_SPLIT_REGEXP))
+    .tap(R.partial(assertSQLSections, migration))
+    .then(R.nth(0))
+    .then(R.trim);
+}
+
+export function readDownSQL(migration: Migration): Promise<string> {
+  if (migration.split) {
+    return fs.readFileAsync(migration.downPath, {encoding: 'utf8'})
+      .then(R.trim);
+  }
+  return fs.readFileAsync(migration.path, {encoding: 'utf8'})
+    .then(R.split(MIGRATION_SQL_SPLIT_REGEXP))
+    .tap(R.partial(assertSQLSections, migration))
+    .then(R.nth(1))
+    .then(R.trim);
+}
