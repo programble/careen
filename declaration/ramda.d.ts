@@ -1,4 +1,6 @@
 declare module 'ramda' {
+  export function always<T>(val: T): (...args: any[]) => T;
+
   export function assoc<T>(prop: string, val: any, obj: T): T;
   export function assoc<T>(prop: string, val: any): (obj: T) => T;
 
@@ -12,6 +14,9 @@ declare module 'ramda' {
 
   export function groupBy<T>(fn: (item: T) => string, list: T[]): {[s: string]: T[]};
   export function groupBy<T>(fn: (item: T) => string): (list: T[]) => {[s: string]: T[]};
+
+  export function has(prop: string, obj: {[s: string]: any}): boolean;
+  export function has(prop: string): (obj: {[s: string]: any}) => boolean;
 
   export function identity<T>(x: T): T;
 
@@ -42,15 +47,25 @@ declare module 'ramda' {
   export function propEq<T>(index: number, val: T, list: T[]): boolean;
   export function propEq<T>(index: number, val: T): (list: T[]) => boolean;
 
+  export function reduce<T, U>(fn: (acc: T, value: U) => T, acc: T, list: U[]): T;
+  export function reduce<T, U>(fn: (acc: T, value: U) => T, acc: T): (list: U[]) => T;
+  export function reduce<T, U>(fn: (acc: T, value: U) => T): (acc: T, list: U[]) => T;
+
   export function sortBy<T>(fn: (item: T) => string, list: T[]): T[];
   export function sortBy<T>(fn: (item: T) => string): (list: T[]) => T[];
 
   export function split(sep: string | RegExp, str: string): string[];
   export function split(sep: string | RegExp): (str: string) => string[];
 
+  export function times<T>(fn: (i: number) => T, n: number): T[];
+  export function times<T>(fn: (i: number) => T): (n: number) => T[];
+
   export function trim(str: string): string;
 
   export function values<T>(obj: {[s: string]: T}): T[];
+
+  export function zipObj<T>(keys: string[], values: T[]): {[s: string]: T};
+  export function zipObj<T>(keys: string[]): (values: T[]) => {[s: string]: T};
 
   export function F(): boolean;
   export function T(): boolean;
