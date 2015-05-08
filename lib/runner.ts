@@ -3,21 +3,19 @@
 import Promise = require('bluebird');
 
 import files = require('./files');
-import clientInterface = require('./client/index');
-import Client = clientInterface.Client;
-import Config = clientInterface.Config;
-import Operation = clientInterface.Operation;
+// To not conflict with client instances.
+import c = require('./client/index');
 
-function requireClient(name: string): Client {
-  return require('./clients/' + name);
+function requireClient(name: string): c.Client {
+  return require('./client/' + name);
 }
 
-function useConnection(client: Client, config: Config) {
+function useConnection(client: c.Client, config: c.Config) {
   return client.connect(config).disposer(client.disconnect);
 }
 
 export function readJournal(
-  clientName: string, config: Config, journalTable: string
+  clientName: string, config: c.Config, journalTable: string
 ) {
   var client = requireClient(clientName);
   return Promise.using(useConnection(client, config), (db) =>
@@ -27,11 +25,11 @@ export function readJournal(
 }
 
 function eachRunner(
-  operation: Operation, readSQL: (migration: files.Migration) => Promise<string>
+  operation: c.Operation, readSQL: (migration: files.Migration) => Promise<string>
 ) {
   return function(
     clientName: string,
-    config: Config,
+    config: c.Config,
     journalTable: string,
     migrations: files.Migration[]
   ) {
@@ -57,11 +55,11 @@ function eachRunner(
 }
 
 function allRunner(
-  operation: Operation, readSQL: (migration: files.Migration) => Promise<string>
+  operation: c.Operation, readSQL: (migration: files.Migration) => Promise<string>
 ) {
   return function(
     clientName: string,
-    config: Config,
+    config: c.Config,
     journalTable: string,
     migrations: files.Migration[]
   ) {
@@ -87,11 +85,11 @@ function allRunner(
 }
 
 function dryRunner(
-  operation: Operation, readSQL: (migration: files.Migration) => Promise<string>
+  operation: c.Operation, readSQL: (migration: files.Migration) => Promise<string>
 ) {
   return function(
     clientName: string,
-    config: Config,
+    config: c.Config,
     journalTable: string,
     migrations: files.Migration[]
   ) {
@@ -115,10 +113,59 @@ function dryRunner(
   };
 }
 
-export var applyEach = eachRunner(Operation.apply, files.readUpSQL);
-export var applyAll = allRunner(Operation.apply, files.readUpSQL);
-export var applyDry = dryRunner(Operation.apply, files.readUpSQL);
+// Exported as functions that create runner functions then apply them so that
+// files.readUpSQL and files.readDownSQL can be spied in tests.
 
-export var revertEach = eachRunner(Operation.revert, files.readDownSQL);
-export var revertAll = allRunner(Operation.revert, files.readDownSQL);
-export var revertDry = dryRunner(Operation.revert, files.readDownSQL);
+export function applyEach(
+  clientName: string,
+  config: c.Config,
+  journalTable: string,
+  migrations: files.Migration[]
+) {
+  return eachRunner(c.Operation.apply, files.readUpSQL).apply(null, arguments);
+}
+
+export function applyAll(
+  clientName: string,
+  config: c.Config,
+  journalTable: string,
+  migrations: files.Migration[]
+) {
+  return allRunner(c.Operation.apply, files.readUpSQL).apply(null, arguments);
+}
+
+export function applyDry(
+  clientName: string,
+  config: c.Config,
+  journalTable: string,
+  migrations: files.Migration[]
+) {
+  return dryRunner(c.Operation.apply, files.readUpSQL).apply(null, arguments);
+}
+
+export function revertEach(
+  clientName: string,
+  config: c.Config,
+  journalTable: string,
+  migrations: files.Migration[]
+) {
+  return eachRunner(c.Operation.revert, files.readDownSQL).apply(null, arguments);
+}
+
+export function revertAll(
+  clientName: string,
+  config: c.Config,
+  journalTable: string,
+  migrations: files.Migration[]
+) {
+  return allRunner(c.Operation.revert, files.readDownSQL).apply(null, arguments);
+}
+
+export function revertDry(
+  clientName: string,
+  config: c.Config,
+  journalTable: string,
+  migrations: files.Migration[]
+) {
+  return dryRunner(c.Operation.revert, files.readDownSQL).apply(null, arguments);
+}
