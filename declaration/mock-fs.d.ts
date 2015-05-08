@@ -1,50 +1,46 @@
-// Type definitions for mock-fs 2.5.0
-// Project: https://github.com/tschaub/mock-fs
-// Definitions by: Wim Looman <https://github.com/Nemo157>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
-
-/// <reference path="node.d.ts" />
-
-declare module "mock-fs" {
-  import fs = require("fs");
+declare module 'mock-fs' {
+  import fs = require('fs');
 
   function mock(config?: mock.Config): void;
 
   module mock {
-    function file(config: FileConfig): File;
-    function directory(config: DirectoryConfig): Directory;
-    function symlink(config: SymlinkConfig): Symlink;
-
-    function restore(): void;
-
-    function fs(config?: Config): typeof fs;
+    class File {}
+    class Directory {}
+    class Symlink {}
 
     interface Config {
       [path: string]: string | Buffer | File | Directory | Symlink | Config;
     }
 
-    interface CommonConfig {
+    interface Properties {
       mode?: number;
       uid?: number;
-      git?: number;
+      gid?: number;
       atime?: Date;
       ctime?: Date;
       mtime?: Date;
+      birthtime?: Date;
     }
 
-    interface FileConfig extends CommonConfig {
+    interface FileProperties extends Properties {
       content: string | Buffer;
     }
-    interface DirectoryConfig extends CommonConfig {
+
+    interface DirectoryProperties extends Properties {
       items: Config;
     }
-    interface SymlinkConfig extends CommonConfig {
+
+    interface SymlinkProperties extends Properties {
       path: string;
     }
 
-    class File { private _file: any; }
-    class Directory { private _directory: any; }
-    class Symlink { private _symlink: any; }
+    function file(properties: FileProperties): File;
+    function directory(properties: DirectoryProperties): Directory;
+    function symlink(properties: SymlinkProperties): Symlink;
+
+    function restore(): void;
+
+    function fs(config?: Config): typeof fs;
   }
 
   export = mock;
