@@ -16,7 +16,7 @@ export enum State {
 
 export var InvalidJournalOperationError = SuperError.subclass(
   'InvalidJournalOperationError',
-  function(operation: string) {
+  function(operation: any) {
     this.message = 'Invalid journal entry operation: ' + operation;
   }
 );
