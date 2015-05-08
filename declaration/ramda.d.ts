@@ -7,6 +7,9 @@ declare module 'ramda' {
   export function find<T>(fn: (item: T) => boolean, list: T[]): T;
   export function find<T>(fn: (item: T) => boolean): (list: T[]) => T;
 
+  export function forEach<T>(fn: (item: T) => void, list: T[]): T[];
+  export function forEach<T>(fn: (item: T) => void): (list: T[]) => T[];
+
   export function groupBy<T>(fn: (item: T) => string, list: T[]): {[s: string]: T[]};
   export function groupBy<T>(fn: (item: T) => string): (list: T[]) => {[s: string]: T[]};
 
