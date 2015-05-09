@@ -70,7 +70,7 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
       before(hooks.connect);
       before(hooks.beginTransaction);
 
-      it('succeeds', () => t.client.commitTransaction);
+      it('succeeds', () => t.client.commitTransaction(db));
 
       after(hooks.disconnect);
       after(hooks.dropDatabase);
