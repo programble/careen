@@ -4,11 +4,14 @@
   "description": "SQL schema migration. Nothing more. Nothing less.",
   "main": "index.js",
   "scripts": {
-    "build": "node_modules/.bin/tsc @tsc.opts lib/*.ts lib/client/*.ts",
-    "build-test": "node_modules/.bin/tsc @tsc.opts declaration/test.d.ts test/*.ts test/client/*.ts",
-    "mocha": "node_modules/.bin/mocha",
+    "build": "tsc @tsc.opts lib/*.ts lib/client/*.ts",
+    "build-test": "tsc @tsc.opts declaration/test.d.ts test/*.ts test/client/*.ts",
+    "mocha": "mocha",
     "test": "npm run build && npm run build-test && npm run mocha",
-    "clean": "find lib test -name '*.js' -delete"
+    "istanbul": "istanbul cover node_modules/.bin/_mocha",
+    "coverage": "npm run build && npm run build-test && npm run istanbul",
+    "coveralls": "coveralls < coverage/lcov.info",
+    "clean": "find lib test -name '*.js' -delete && rm -rf coverage"
   },
   "repository": {
     "type": "git",
@@ -32,6 +35,8 @@
     "super-error": "^1.1.2"
   },
   "devDependencies": {
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.13",
     "mocha": "^2.2.1",
     "mock-fs": "^2.7.0",
     "pg": "^4.3.0",
