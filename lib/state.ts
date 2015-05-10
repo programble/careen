@@ -14,6 +14,12 @@ export enum State {
   missing
 }
 
+export interface MigrationState {
+  migrationID: string;
+  migrationName: string;
+  state: State;
+}
+
 export var InvalidJournalOperationError = SuperError.subclass(
   'InvalidJournalOperationError',
   function(operation: any) {
@@ -23,21 +29,34 @@ export var InvalidJournalOperationError = SuperError.subclass(
 
 export function getMigrationStates(
   migrations: files.Migration[], journalEntries: client.JournalEntry[]
-): { [id: string]: State } {
-  var initialStates = R.zipObj(
-    R.map(migration => migration.id, migrations),
-    R.times(R.always(State.pending), migrations.length)
-  );
+): MigrationState[] {
+  var migrationIDSet: { [id: string]: boolean } = {};
+  var states: { [id: string]: MigrationState } = {};
 
-  return R.reduce(function(states, journalEntry) {
-    if (!R.has(journalEntry.migrationID, states)) {
-      return R.assoc(journalEntry.migrationID, State.missing, states);
-    } else if (journalEntry.operation === client.Operation.apply) {
-      return R.assoc(journalEntry.migrationID, State.applied, states);
-    } else if (journalEntry.operation === client.Operation.revert) {
-      return R.assoc(journalEntry.migrationID, State.reverted, states);
+  R.forEach(function(migration) {
+    migrationIDSet[migration.id] = true;
+    states[migration.id] = {
+      migrationID: migration.id,
+      migrationName: migration.name,
+      state: State.pending
+    };
+  }, migrations);
+
+  R.forEach(function(entry) {
+    if (!migrationIDSet[entry.migrationID]) {
+      states[entry.migrationID] = {
+        migrationID: entry.migrationID,
+        migrationName: entry.migrationName,
+        state: State.missing
+      };
+    } else if (entry.operation === client.Operation.apply) {
+      states[entry.migrationID].state = State.applied;
+    } else if (entry.operation === client.Operation.revert) {
+      states[entry.migrationID].state = State.reverted;
     } else {
-      throw new InvalidJournalOperationError(journalEntry.operation);
+      throw new InvalidJournalOperationError(entry.operation);
     }
-  }, initialStates, journalEntries);
+  }, journalEntries);
+
+  return R.sortBy(s => s.migrationID, R.values(states));
 }

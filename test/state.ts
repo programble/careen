@@ -36,15 +36,17 @@ var journalEntries = {
 describe('State', function() {
   describe('getMigrationStates', function() {
     describe('with nothing', function() {
-      it('returns empty object', () =>
-        assert.deepEqual(state.getMigrationStates([], []), {})
+      it('returns empty array', () =>
+        assert.deepEqual(state.getMigrationStates([], []), [])
       );
     });
 
     describe('with journal entry without migration', function() {
       it('returns missing state', function() {
         var states = state.getMigrationStates([], [journalEntries.apply]);
-        assert.equal(states[migration.id], state.State.missing);
+        assert.equal(states[0].migrationID, journalEntries.apply.migrationID);
+        assert.equal(states[0].migrationName, journalEntries.apply.migrationName);
+        assert.equal(states[0].state, state.State.missing);
       });
     });
 
@@ -52,14 +54,18 @@ describe('State', function() {
       describe('without journal entries', function() {
         it('returns pending state', function() {
           var states = state.getMigrationStates([migration], []);
-          assert.equal(states[migration.id], state.State.pending);
+          assert.equal(states[0].migrationID, migration.id);
+          assert.equal(states[0].migrationName, migration.name);
+          assert.equal(states[0].state, state.State.pending);
         });
       });
 
       describe('with apply journal entry', function() {
         it('returns applied state', function() {
           var states = state.getMigrationStates([migration], [journalEntries.apply]);
-          assert.equal(states[migration.id], state.State.applied);
+          assert.equal(states[0].migrationID, migration.id);
+          assert.equal(states[0].migrationName, migration.name);
+          assert.equal(states[0].state, state.State.applied);
         });
       });
 
@@ -68,7 +74,9 @@ describe('State', function() {
           var states = state.getMigrationStates(
             [migration], [journalEntries.apply, journalEntries.revert]
           );
-          assert.equal(states[migration.id], state.State.reverted);
+          assert.equal(states[0].migrationID, migration.id);
+          assert.equal(states[0].migrationName, migration.name);
+          assert.equal(states[0].state, state.State.reverted);
         });
       });
 
@@ -78,7 +86,9 @@ describe('State', function() {
             [migration],
             [journalEntries.apply, journalEntries.revert, journalEntries.apply]
           );
-          assert.equal(states[migration.id], state.State.applied);
+          assert.equal(states[0].migrationID, migration.id);
+          assert.equal(states[0].migrationName, migration.name);
+          assert.equal(states[0].state, state.State.applied);
         });
       });
 
