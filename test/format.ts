@@ -35,7 +35,16 @@ describe('Format', function() {
   });
 
   describe('formatMigration', function() {
-    it('formats', () =>
+    it('formats non-split', () =>
+      f.formatMigration({
+        id: '1',
+        name: 'test',
+        split: false,
+        path: 'migrations/1.test.sql'
+      })
+    );
+
+    it('formats split', () =>
       f.formatMigration({
         id: '1',
         name: 'test',
@@ -47,7 +56,16 @@ describe('Format', function() {
   });
 
   describe('formatMigrationLong', function() {
-    it('formats', () =>
+    it('formats non-split', () =>
+      f.formatMigrationLong({
+        id: '1',
+        name: 'test',
+        split: false,
+        path: 'migrations/1.test.sql'
+      })
+    );
+
+    it('formats split', () =>
       f.formatMigrationLong({
         id: '1',
         name: 'test',
