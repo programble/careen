@@ -35,7 +35,7 @@ describe('Format', function() {
   });
 
   describe('formatMigration', function() {
-    it('formats non-split', () =>
+    it('formats combined', () =>
       f.formatMigration({
         id: '1',
         name: 'test',
@@ -56,7 +56,7 @@ describe('Format', function() {
   });
 
   describe('formatMigrationLong', function() {
-    it('formats non-split', () =>
+    it('formats combined', () =>
       f.formatMigrationLong({
         id: '1',
         name: 'test',
