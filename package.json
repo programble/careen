@@ -30,6 +30,7 @@
   "homepage": "https://github.com/programble/careen",
   "dependencies": {
     "bluebird": "^2.9.14",
+    "chalk": "^1.0.0",
     "hemp": "^0.1.2",
     "ramda": "^0.13.0",
     "super-error": "^1.1.2"
