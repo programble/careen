@@ -33,7 +33,7 @@ var journalEntries = {
   }
 };
 
-describe('State', function() {
+describe('Status', function() {
   describe('getMigrationStates', function() {
     describe('with nothing', function() {
       it('returns empty array', () =>
