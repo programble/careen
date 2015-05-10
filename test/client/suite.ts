@@ -20,21 +20,17 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
   var db: client.Connection;
 
   var hooks = {
-    createDatabase: function() {
-      this.timeout(5000);
-      return t.createDatabase().tap(c => config = c);
-    },
-    dropDatabase: function() {
-      this.timeout(5000);
-      return t.dropDatabase(config);
-    },
+    createDatabase:   () => t.createDatabase().tap(c => config = c),
     connect:          () => t.client.connect(config).tap(c => db = c),
     beginTransaction: () => t.client.beginTransaction(db),
     ensureJournal:    () => t.client.ensureJournal(db, 'journal'),
     disconnect:       () => t.client.disconnect(db),
+    dropDatabase:     () => t.dropDatabase(config)
   };
 
   (t.skip ? describe.skip : describe)(t.prettyName + ' client', function() {
+    this.timeout(5000);
+
     describe('connect', function() {
       before(hooks.createDatabase);
 
