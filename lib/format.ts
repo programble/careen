@@ -65,7 +65,7 @@ export function formatState(state: status.State) {
 
 export function formatMigrationState(migrationState: status.MigrationState) {
   return util.format(
-    '%s %s %s',
+    '%s %s %s\n',
     formatState(migrationState.state),
     migrationState.migrationID,
     migrationState.migrationName
