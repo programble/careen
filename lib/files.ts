@@ -15,7 +15,15 @@ export function ensureDirectory(directory: string) {
 export function create(template: string, directory: string, id: string, name: string) {
   var fileName = id + '.' + name + '.sql';
   var filePath = path.join(directory, fileName);
-  return fs.writeFileAsync(filePath, template, {flag: 'wx'}).return(filePath);
+
+  var migration: Migration = {
+    id: id,
+    name: name,
+    split: false,
+    path: filePath
+  };
+
+  return fs.writeFileAsync(filePath, template, {flag: 'wx'}).return(migration);
 }
 
 export function createSplit(
@@ -25,10 +33,19 @@ export function createSplit(
   var upPath = path.join(directory, upName);
   var downName = id + '.' + name + '.down.sql';
   var downPath = path.join(directory, downName);
+
+  var migration: Migration = {
+    id: id,
+    name: name,
+    split: true,
+    upPath: upPath,
+    downPath: downPath
+  };
+
   return Promise.join(
     fs.writeFileAsync(upPath, upTemplate, {flag: 'wx'}),
     fs.writeFileAsync(downPath, downTemplate, {flag: 'wx'}),
-    () => [upPath, downPath]
+    () => migration
   );
 }
 

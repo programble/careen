@@ -38,18 +38,25 @@ describe('Files', function() {
   describe('create', function() {
     before(() => mockFS({migrations: {}}));
 
-    var path: string;
+    var migration: files.Migration;
 
     it('succeeds', () =>
-      files.create('---\n', 'migrations', '1', 'test').tap(p => path = p)
+      files.create('---\n', 'migrations', '1', 'test').tap(m => migration = m)
     );
 
+    it('returns migration', function() {
+      assert.equal(migration.id, '1');
+      assert.equal(migration.name, 'test');
+      assert.equal(migration.split, false);
+      assert(migration.path);
+    });
+
     it('creates file', () =>
-      fs.statAsync(path).tap(stats => assert(stats.isFile()))
+      fs.statAsync(migration.path).tap(stats => assert(stats.isFile()))
     );
 
     it('writes template to file', () =>
-      fs.readFileAsync(path, {encoding: 'utf8'})
+      fs.readFileAsync(migration.path, {encoding: 'utf8'})
         .tap(data => assert.equal(data, '---\n'))
     );
 
@@ -59,27 +66,38 @@ describe('Files', function() {
   describe('createSplit', function() {
     before(() => mockFS({migrations: {}}));
 
-    var paths: string[];
+    var migration: files.Migration;
 
     it('succeeds', () =>
       files.createSplit('-- up\n', '-- down\n', 'migrations', '1', 'test')
-        .tap(ps => paths = ps)
+        .tap(m => migration = m)
     );
 
-    it('returns paths', () => assert.equal(paths.length, 2));
+    it('returns migration', function() {
+      assert.equal(migration.id, '1');
+      assert.equal(migration.name, 'test');
+      assert.equal(migration.split, true);
+      assert(migration.upPath);
+      assert(migration.downPath);
+    });
 
-    it('creates files', () =>
-      Promise.map(paths, path => fs.statAsync(path))
-        .each((stats: fs.Stats) => assert(stats.isFile()))
+    it('creates up file', () =>
+      fs.statAsync(migration.upPath)
+        .tap(stats => assert(stats.isFile()))
+    );
+
+    it('creates down file', () =>
+      fs.statAsync(migration.downPath)
+        .tap(stats => assert(stats.isFile()))
     );
 
     it('writes up template to file', () =>
-      fs.readFileAsync(paths[0], {encoding: 'utf8'})
+      fs.readFileAsync(migration.upPath, {encoding: 'utf8'})
         .tap(sql => assert.equal(sql, '-- up\n'))
     );
 
     it('writes down template to file', () =>
-      fs.readFileAsync(paths[1], {encoding: 'utf8'})
+      fs.readFileAsync(migration.downPath, {encoding: 'utf8'})
         .tap(sql => assert.equal(sql, '-- down\n'))
     );
 
