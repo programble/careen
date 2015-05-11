@@ -38,7 +38,7 @@ describe('Files', function() {
   describe('create', function() {
     before(() => mockFS({migrations: {}}));
 
-    var migration: files.Migration;
+    let migration: files.Migration;
 
     it('succeeds', () =>
       files.create('---\n', 'migrations', '1', 'test').tap(m => migration = m)
@@ -66,7 +66,7 @@ describe('Files', function() {
   describe('createSplit', function() {
     before(() => mockFS({migrations: {}}));
 
-    var migration: files.Migration;
+    let migration: files.Migration;
 
     it('succeeds', () =>
       files.createSplit('-- up\n', '-- down\n', 'migrations', '1', 'test')
@@ -108,7 +108,7 @@ describe('Files', function() {
     describe('with empty directory', function() {
       before(() => mockFS({migrations: {}}));
 
-      var migrations: files.Migration[];
+      let migrations: files.Migration[];
 
       it('succeeds', () =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -127,7 +127,7 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
+      let migrations: files.Migration[];
 
       it('succeeds', () =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -173,7 +173,7 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
+      let migrations: files.Migration[];
 
       it('succeeds', () =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -196,7 +196,7 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
+      let migrations: files.Migration[];
 
       it('succeeds', () =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -299,8 +299,8 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
-      var upSQL: string;
+      let migrations: files.Migration[];
+      let upSQL: string;
 
       before(() =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -324,8 +324,8 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
-      var upSQL: string;
+      let migrations: files.Migration[];
+      let upSQL: string;
 
       before(() =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -349,7 +349,7 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
+      let migrations: files.Migration[];
 
       before(() =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -372,7 +372,7 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
+      let migrations: files.Migration[];
 
       before(() =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -398,8 +398,8 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
-      var downSQL: string;
+      let migrations: files.Migration[];
+      let downSQL: string;
 
       before(() =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -423,8 +423,8 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
-      var downSQL: string;
+      let migrations: files.Migration[];
+      let downSQL: string;
 
       before(() =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -448,7 +448,7 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
+      let migrations: files.Migration[];
 
       before(() =>
         files.listMigrations('migrations').tap(ms => migrations = ms)
@@ -471,7 +471,7 @@ describe('Files', function() {
         }
       }));
 
-      var migrations: files.Migration[];
+      let migrations: files.Migration[];
 
       before(() =>
         files.listMigrations('migrations').tap(ms => migrations = ms)

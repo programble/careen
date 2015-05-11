@@ -1,7 +1,6 @@
 'use strict';
 
 import Promise = require('bluebird');
-import Hemp = require('hemp');
 import pg = require('pg');
 Promise.promisifyAll(pg.Client.prototype);
 
@@ -13,7 +12,7 @@ export interface Config extends pg.ClientConfig {
 }
 
 export function connect(config: Config): Promise<pg.Client> {
-  var db = config.url
+  let db = config.url
     ? new pg.Client(config.url)
     : new pg.Client(config);
   return db.connectAsync().return(db);
@@ -25,7 +24,7 @@ export function disconnect(db: pg.Client) {
 
 // Run an SQL query and accumulate the result rows.
 function runQuery(db: pg.Client, sql: string, values?: any[]): Promise<pg.QueryResult> {
-  var query = db.query(sql, values);
+  let query = db.query(sql, values);
   query.on('row', (row, result) => result.addRow(row));
   return new Promise(function(
     resolve: (value: pg.QueryResult) => void,
@@ -49,23 +48,21 @@ export function rollbackTransaction(db: pg.Client) {
 }
 
 export function ensureJournal(db: pg.Client, tableName: string) {
-  var sql = Hemp(' ', null, ';')
-    ('CREATE TABLE IF NOT EXISTS', tableName, '(')
-      ('timestamp TIMESTAMP PRIMARY KEY,')
-      ('operation TEXT NOT NULL,')
-      ('migration_id TEXT NOT NULL,')
-      ('migration_name TEXT NOT NULL')
-    (')');
-  return runQuery(db, sql.toString());
+  return runQuery(db, `
+    CREATE TABLE IF NOT EXISTS ${tableName} (
+      timestamp TIMESTAMP PRIMARY KEY,
+      operation TEXT NOT NULL,
+      migration_id TEXT NOT NULL,
+      migration_name TEXT NOT NULL
+    );
+  `);
 }
 
 export function appendJournal(db: pg.Client, tableName: string, entry: client.JournalEntryIn) {
-  var sql = Hemp(' ', null, ';')
-    ('INSERT INTO', tableName)
-    ('(timestamp, operation, migration_id, migration_name)')
-    ('VALUES')
-    ('(now(), $1, $2, $3)');
-  return runQuery(db, sql.toString(), [
+  return runQuery(db, `
+    INSERT INTO ${tableName} (timestamp, operation, migration_id, migration_name)
+    VALUES (now(), $1, $2, $3);
+  `, [
     client.Operation[entry.operation],
     entry.migrationID,
     entry.migrationName
@@ -73,10 +70,7 @@ export function appendJournal(db: pg.Client, tableName: string, entry: client.Jo
 }
 
 export function readJournal(db: pg.Client, tableName: string) {
-  var sql = Hemp(' ', null, ';')
-    ('SELECT * FROM', tableName)
-    ('ORDER BY timestamp');
-  return runQuery(db, sql.toString())
+  return runQuery(db, `SELECT * FROM ${tableName} ORDER BY timestamp;`)
     .then(result => result.rows)
     .map(function(row: any): client.JournalEntry {
       return {

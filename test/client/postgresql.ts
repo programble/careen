@@ -3,12 +3,12 @@
 import childProcess = require('child_process');
 
 import Promise = require('bluebird');
-var exec = Promise.promisify(childProcess.exec);
+let exec = Promise.promisify(childProcess.exec);
 
 import suite = require('./suite');
 import postgresql = require('../../lib/client/postgresql');
 
-var databaseID = 1;
+let databaseID = 1;
 
 suite<typeof postgresql, postgresql.Config>({
   prettyName: 'PostgreSQL',
@@ -16,12 +16,12 @@ suite<typeof postgresql, postgresql.Config>({
   client: postgresql,
 
   createDatabase: function() {
-    var config = {database: 'careen-test-' + databaseID};
+    let config = {database: 'careen-test-' + databaseID};
     databaseID++;
-    return exec('createdb ' + config.database).return(config);
+    return exec(`createdb ${config.database}`).return(config);
   },
 
   dropDatabase: function(config) {
-    return exec('dropdb ' + config.database);
+    return exec(`dropdb ${config.database}`);
   }
 });

@@ -12,7 +12,7 @@ import client = require('../lib/client/index');
 import dummy = require('../lib/client/dummy');
 import runner = require('../lib/runner');
 
-var migrationFiles = {
+const migrationFiles = {
   success3: {
     '1.first.sql': 'CREATE TABLE a (a INTEGER);\n---\nDROP TABLE a;\n',
     '2.second.sql': 'CREATE TABLE b (b INTEGER);\n---\nDROP TABLE b;\n',
@@ -31,7 +31,7 @@ var migrationFiles = {
 };
 
 describe('Runner', function() {
-  var spies: {
+  let spies: {
     [s: string]: sinon.Spy;
     connect?: sinon.Spy; ensureJournal?: sinon.Spy; readJournal?: sinon.Spy;
     beginTransaction?: sinon.Spy; runMigrationSQL?: sinon.Spy;
@@ -40,7 +40,7 @@ describe('Runner', function() {
     readUpSQL?: sinon.Spy; readDownSQL?: sinon.Spy;
   } = {};
 
-  var resetSpies = () => R.forEach(spy => spy.reset(), R.values(spies));
+  let resetSpies = () => R.forEach(spy => spy.reset(), R.values(spies));
 
   before(function() {
     R.forEach(method => spies[method] = sinon.spy(dummy, method), [
@@ -120,7 +120,7 @@ describe('Runner', function() {
       before(() => mockFS({migrations: migrationFiles.fail2Up}));
       before(resetSpies);
 
-      var applyEach: Promise<any>;
+      let applyEach: Promise<any>;
 
       it('fails', function() {
         applyEach = files.listMigrations('migrations').then(migrations =>
@@ -212,7 +212,7 @@ describe('Runner', function() {
       before(() => mockFS({migrations: migrationFiles.fail2Up}));
       before(resetSpies);
 
-      var applyAll: Promise<any>;
+      let applyAll: Promise<any>;
 
       it('fails', function() {
         applyAll = files.listMigrations('migrations').then(migrations =>
@@ -307,7 +307,7 @@ describe('Runner', function() {
       before(() => mockFS({migrations: migrationFiles.fail2Up}));
       before(resetSpies);
 
-      var applyDry: Promise<any>;
+      let applyDry: Promise<any>;
 
       it('fails', function() {
         applyDry = files.listMigrations('migrations').then(migrations =>
@@ -399,7 +399,7 @@ describe('Runner', function() {
       before(() => mockFS({migrations: migrationFiles.fail2Down}));
       before(resetSpies);
 
-      var revertEach: Promise<any>;
+      let revertEach: Promise<any>;
 
       it('fails', function() {
         revertEach = files.listMigrations('migrations').then(migrations =>
@@ -491,7 +491,7 @@ describe('Runner', function() {
       before(() => mockFS({migrations: migrationFiles.fail2Down}));
       before(resetSpies);
 
-      var revertAll: Promise<any>;
+      let revertAll: Promise<any>;
 
       it('fails', function() {
         revertAll = files.listMigrations('migrations').then(migrations =>
@@ -586,7 +586,7 @@ describe('Runner', function() {
       before(() => mockFS({migrations: migrationFiles.fail2Down}));
       before(resetSpies);
 
-      var revertDry: Promise<any>;
+      let revertDry: Promise<any>;
 
       it('fails', function() {
         revertDry = files.listMigrations('migrations').then(migrations =>

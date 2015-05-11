@@ -58,19 +58,19 @@ export function rollbackTransaction(db: DB) {
 }
 
 export function ensureJournal(db: DB, tableName: string) {
-  var tables = (db.transaction || db.live).tables;
+  let tables = (db.transaction || db.live).tables;
   if (!tables[tableName]) tables[tableName] = [];
   return Promise.resolve();
 }
 
 export function appendJournal(db: DB, tableName: string, entry: client.JournalEntryIn) {
-  var journal = (db.transaction || db.live).tables[tableName];
+  let journal = (db.transaction || db.live).tables[tableName];
   journal.push(R.assoc('timestamp', new Date(), entry));
   return Promise.resolve();
 }
 
 export function readJournal(db: DB, tableName: string) {
-  var entries = (db.transaction || db.live).tables[tableName];
+  let entries = (db.transaction || db.live).tables[tableName];
   return Promise.resolve(<client.JournalEntry[]> entries);
 }
 

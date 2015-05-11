@@ -9,7 +9,7 @@ import client = require('./client/index');
 import files = require('./files');
 import status = require('./status');
 
-var colors = {
+const colors = {
   apply: chalk.green,
   revert: chalk.magenta,
   pending: chalk.blue,
@@ -37,7 +37,7 @@ export function formatMigration(migration: files.Migration) {
 }
 
 export function formatMigrationLong(migration: files.Migration) {
-  var cwd = process.cwd();
+  let cwd = process.cwd();
   if (migration.split) {
     return util.format(
       '%s %s\n  %s\n  %s\n',

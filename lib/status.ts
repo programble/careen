@@ -22,15 +22,15 @@ export interface MigrationState {
 
 export class InvalidJournalOperationError extends StandardError {
   constructor(public operation: any) {
-    super('Invalid journal entry operation: ' + operation);
+    super(`Invalid journal entry operation: ${operation}`);
   }
 }
 
 export function getMigrationStates(
   migrations: files.Migration[], journalEntries: client.JournalEntry[]
 ): MigrationState[] {
-  var migrationIDSet: { [id: string]: boolean } = {};
-  var states: { [id: string]: MigrationState } = {};
+  let migrationIDSet: { [id: string]: boolean } = {};
+  let states: { [id: string]: MigrationState } = {};
 
   R.forEach(function(migration) {
     migrationIDSet[migration.id] = true;

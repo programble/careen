@@ -1,7 +1,6 @@
 'use strict';
 
 import Promise = require('bluebird');
-import Hemp = require('hemp');
 import sqlite3 = require('sqlite3');
 Promise.promisifyAll(sqlite3.Database.prototype);
 
@@ -16,7 +15,7 @@ export function connect(config: Config) {
     resolve: (result: sqlite3.Database) => void,
     reject: (error: any) => void
   ) {
-    var db = new sqlite3.Database(config.filename);
+    let db = new sqlite3.Database(config.filename);
     db.once('error', reject);
     db.once('open', () => resolve(db));
   });
@@ -39,23 +38,21 @@ export function rollbackTransaction(db: sqlite3.Database) {
 }
 
 export function ensureJournal(db: sqlite3.Database, tableName: string) {
-  var sql = Hemp(' ', null, ';')
-    ('CREATE TABLE IF NOT EXISTS', tableName, '(')
-      ('timestamp TEXT NOT NULL,')
-      ('operation TEXT NOT NULL,')
-      ('migration_id TEXT NOT NULL,')
-      ('migration_name TEXT NOT NULL')
-    (')');
-  return db.runAsync(sql.toString());
+  return db.runAsync(`
+    CREATE TABLE IF NOT EXISTS ${tableName} (
+      timestamp TEXT NOT NULL,
+      operation TEXT NOT NULL,
+      migration_id TEXT NOT NULL,
+      migration_name TEXT NOT NULL
+    );
+  `);
 }
 
 export function appendJournal(db: sqlite3.Database, tableName: string, entry: client.JournalEntryIn) {
-  var sql = Hemp(' ', null, ';')
-    ('INSERT INTO', tableName)
-    ('(timestamp, operation, migration_id, migration_name)')
-    ('VALUES')
-    ("(datetime('now'), ?, ?, ?)");
-  return db.runAsync(sql.toString(), [
+  return db.runAsync(`
+    INSERT INTO ${tableName} (timestamp, operation, migration_id, migration_name)
+    VALUES (datetime('now'), ?, ?, ?);
+  `, [
     client.Operation[entry.operation],
     entry.migrationID,
     entry.migrationName
@@ -63,10 +60,7 @@ export function appendJournal(db: sqlite3.Database, tableName: string, entry: cl
 }
 
 export function readJournal(db: sqlite3.Database, tableName: string) {
-  var sql = Hemp(' ', null, ';')
-    ('SELECT * FROM', tableName)
-    ('ORDER BY timestamp');
-  return db.allAsync(sql.toString())
+  return db.allAsync(`SELECT * FROM ${tableName} ORDER BY timestamp;`)
     .map(function(row: any): client.JournalEntry {
       return {
         timestamp: new Date(row.timestamp),

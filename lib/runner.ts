@@ -17,7 +17,7 @@ function useConnection(client: c.Client, config: c.Config) {
 export function readJournal(
   clientName: string, config: c.Config, journalTable: string
 ) {
-  var client = requireClient(clientName);
+  let client = requireClient(clientName);
   return Promise.using(useConnection(client, config), (db) =>
     client.ensureJournal(db, journalTable)
       .then(() => client.readJournal(db, journalTable))
@@ -33,7 +33,7 @@ function eachRunner(
     journalTable: string,
     migrations: files.Migration[]
   ) {
-    var client = requireClient(clientName);
+    let client = requireClient(clientName);
     return Promise.using(useConnection(client, config), db =>
       client.ensureJournal(db, journalTable)
         .return(migrations)
@@ -63,7 +63,7 @@ function allRunner(
     journalTable: string,
     migrations: files.Migration[]
   ) {
-    var client = requireClient(clientName);
+    let client = requireClient(clientName);
     return Promise.using(useConnection(client, config), db =>
       client.ensureJournal(db, journalTable)
         .then(() => client.beginTransaction(db))
@@ -93,7 +93,7 @@ function dryRunner(
     journalTable: string,
     migrations: files.Migration[]
   ) {
-    var client = requireClient(clientName);
+    let client = requireClient(clientName);
     return Promise.using(useConnection(client, config), db =>
       client.ensureJournal(db, journalTable)
         .then(() => client.beginTransaction(db))

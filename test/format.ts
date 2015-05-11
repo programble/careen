@@ -8,8 +8,8 @@ import f = require('../lib/format');
 
 describe('Format', function() {
   describe('formatOperation', function() {
-    var apply: string;
-    var revert: string;
+    let apply: string;
+    let revert: string;
 
     it('formats apply', () =>
       apply = f.formatOperation(client.Operation.apply)
@@ -77,10 +77,10 @@ describe('Format', function() {
   });
 
   describe('formatState', function() {
-    var pending: string;
-    var applied: string;
-    var reverted: string;
-    var missing: string;
+    let pending: string;
+    let applied: string;
+    let reverted: string;
+    let missing: string;
 
     it('formats pending', () => pending = f.formatState(status.State.pending));
     it('formats applied', () => applied = f.formatState(status.State.applied));

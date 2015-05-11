@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "commonjs",
+    "noImplicitAny": true
+  },
+  "files": [
+    "declaration/index.d.ts",
+    "lib/index.ts",
+    "lib/client/all.ts"
+  ]
+}

@@ -6,6 +6,9 @@ declare module 'ramda' {
 
   export function clone<T>(value: T): T;
 
+  export function filter<T>(fn: (item: T) => boolean, list: T[]): T[];
+  export function filter<T>(fn: (item: T) => boolean): (list: T[]) => T[];
+
   export function find<T>(fn: (item: T) => boolean, list: T[]): T;
   export function find<T>(fn: (item: T) => boolean): (list: T[]) => T;
 
@@ -19,6 +22,13 @@ declare module 'ramda' {
   export function has(prop: string): (obj: {[s: string]: any}) => boolean;
 
   export function identity<T>(x: T): T;
+
+  export function is(ctor: Function, val: any): boolean;
+  export function is(ctor: Function): (val: any) => boolean;
+
+  export function keys(obj: Object): string[];
+
+  export function last<T>(list: T[]): T;
 
   export function match(rx: RegExp, str: string): RegExpMatchArray;
   export function match(rx: RegExp): (str: string) => RegExpMatchArray;

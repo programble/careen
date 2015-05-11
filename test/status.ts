@@ -5,14 +5,14 @@ import assert = require('assert');
 import client = require('../lib/client/index');
 import status = require('../lib/status');
 
-var migration = {
+const migration = {
   id: '1',
   name: 'test',
   split: false,
   path: 'migrations/1.test.sql'
 };
 
-var journalEntries = {
+const journalEntries = {
   apply: {
     timestamp: new Date(),
     operation: client.Operation.apply,
@@ -43,52 +43,52 @@ describe('Status', function() {
 
     describe('with journal entry without migration', function() {
       it('returns missing state', function() {
-        var states = status.getMigrationStates([], [journalEntries.apply]);
-        assert.equal(states[0].migrationID, journalEntries.apply.migrationID);
-        assert.equal(states[0].migrationName, journalEntries.apply.migrationName);
-        assert.equal(states[0].state, status.State.missing);
+        let [state] = status.getMigrationStates([], [journalEntries.apply]);
+        assert.equal(state.migrationID, journalEntries.apply.migrationID);
+        assert.equal(state.migrationName, journalEntries.apply.migrationName);
+        assert.equal(state.state, status.State.missing);
       });
     });
 
     describe('with migration', function() {
       describe('without journal entries', function() {
         it('returns pending state', function() {
-          var states = status.getMigrationStates([migration], []);
-          assert.equal(states[0].migrationID, migration.id);
-          assert.equal(states[0].migrationName, migration.name);
-          assert.equal(states[0].state, status.State.pending);
+          let [state] = status.getMigrationStates([migration], []);
+          assert.equal(state.migrationID, migration.id);
+          assert.equal(state.migrationName, migration.name);
+          assert.equal(state.state, status.State.pending);
         });
       });
 
       describe('with apply journal entry', function() {
         it('returns applied state', function() {
-          var states = status.getMigrationStates([migration], [journalEntries.apply]);
-          assert.equal(states[0].migrationID, migration.id);
-          assert.equal(states[0].migrationName, migration.name);
-          assert.equal(states[0].state, status.State.applied);
+          let [state] = status.getMigrationStates([migration], [journalEntries.apply]);
+          assert.equal(state.migrationID, migration.id);
+          assert.equal(state.migrationName, migration.name);
+          assert.equal(state.state, status.State.applied);
         });
       });
 
       describe('with apply and revert journal entries', function() {
         it('returns reverted state', function() {
-          var states = status.getMigrationStates(
+          let [state] = status.getMigrationStates(
             [migration], [journalEntries.apply, journalEntries.revert]
           );
-          assert.equal(states[0].migrationID, migration.id);
-          assert.equal(states[0].migrationName, migration.name);
-          assert.equal(states[0].state, status.State.reverted);
+          assert.equal(state.migrationID, migration.id);
+          assert.equal(state.migrationName, migration.name);
+          assert.equal(state.state, status.State.reverted);
         });
       });
 
       describe('with apply, revert, apply journal entries', function() {
         it('returns applied state', function() {
-          var states = status.getMigrationStates(
+          let [state] = status.getMigrationStates(
             [migration],
             [journalEntries.apply, journalEntries.revert, journalEntries.apply]
           );
-          assert.equal(states[0].migrationID, migration.id);
-          assert.equal(states[0].migrationName, migration.name);
-          assert.equal(states[0].state, status.State.applied);
+          assert.equal(state.migrationID, migration.id);
+          assert.equal(state.migrationName, migration.name);
+          assert.equal(state.state, status.State.applied);
         });
       });
 

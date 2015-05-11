@@ -16,10 +16,10 @@ interface Suite<T extends client.Client, U extends client.Config> {
 }
 
 function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>) {
-  var config: U;
-  var db: client.Connection;
+  let config: U;
+  let db: client.Connection;
 
-  var hooks = {
+  let hooks = {
     createDatabase:   () => t.createDatabase().tap(c => config = c),
     connect:          () => t.client.connect(config).tap(c => db = c),
     beginTransaction: () => t.client.beginTransaction(db),
@@ -156,7 +156,7 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
         before(hooks.connect);
         before(hooks.ensureJournal);
 
-        var entries: client.JournalEntry[];
+        let entries: client.JournalEntry[];
 
         it('succeeds', () =>
           t.client.readJournal(db, 'journal').tap(es => entries = es)
@@ -181,7 +181,7 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
           })
         );
 
-        var entries: client.JournalEntry[];
+        let entries: client.JournalEntry[];
 
         it('succeeds', () =>
           t.client.readJournal(db, 'journal').tap(es => entries = es)
@@ -233,7 +233,7 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
           })
         );
 
-        var entries: client.JournalEntry[];
+        let entries: client.JournalEntry[];
 
         it('succeeds', () =>
           t.client.readJournal(db, 'journal').tap(es => entries = es)
