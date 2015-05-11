@@ -1,8 +1,8 @@
 'use strict';
 
 import R = require('ramda');
-import SuperError = require('super-error');
 
+import StandardError = require('./standard-error');
 import client = require('./client/index');
 import files = require('./files');
 import runner = require('./runner');
@@ -20,12 +20,11 @@ export interface MigrationState {
   state: State;
 }
 
-export var InvalidJournalOperationError = SuperError.subclass(
-  'InvalidJournalOperationError',
-  function(operation: any) {
-    this.message = 'Invalid journal entry operation: ' + operation;
+export class InvalidJournalOperationError extends StandardError {
+  constructor(public operation: any) {
+    super('Invalid journal entry operation: ' + operation);
   }
-);
+}
 
 export function getMigrationStates(
   migrations: files.Migration[], journalEntries: client.JournalEntry[]

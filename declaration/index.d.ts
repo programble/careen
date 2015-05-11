@@ -4,7 +4,6 @@
 /// <reference path="bluebird.d.ts" />
 /// <reference path="ramda.d.ts" />
 /// <reference path="hemp.d.ts" />
-/// <reference path="super-error.d.ts" />
 /// <reference path="chalk.d.ts" />
 
 /// <reference path="sqlite3.d.ts" />

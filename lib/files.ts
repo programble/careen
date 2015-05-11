@@ -6,7 +6,8 @@ import path = require('path');
 import R = require('ramda');
 import Promise = require('bluebird');
 Promise.promisifyAll(fs);
-import SuperError = require('super-error');
+
+import StandardError = require('./standard-error');
 
 export function ensureDirectory(directory: string) {
   return fs.mkdirAsync(directory).catch(R.propEq('code', 'EEXIST'));
@@ -60,17 +61,17 @@ export interface Migration {
 
 var MIGRATION_FILE_REGEXP = /^([^.]+)\.([^.]+)\.(up|down)?\.?sql$/;
 
-export var SplitFileMissingError = SuperError.subclass(
-  'SplitFileMissingError', function(path: string) {
-    this.message = 'Missing corresponding migration file for: ' + path;
+export class SplitFileMissingError extends StandardError {
+  constructor(public path: string) {
+    super('Missing corresponding migration file for: ' + path);
   }
-);
+}
 
-export var SplitFileConflictError = SuperError.subclass(
-  'SplitFileConflictError', function(paths: string[]) {
-    this.message = 'Conflicting migration files: ' + paths.join(', ');
+export class SplitFileConflictError extends StandardError {
+  constructor(public paths: string[]) {
+    super('Conflicting migration files: ' + paths.join(', '));
   }
-);
+}
 
 function matchesToMigration(directory: string, matches: RegExpMatchArray[]): Migration {
   if (matches.length === 1) {
@@ -101,7 +102,7 @@ function matchesToMigration(directory: string, matches: RegExpMatchArray[]): Mig
     };
   } else {
     // Too many matches.
-    throw new SplitFileConflictError(R.map(R.nth(0), matches));
+    throw new SplitFileConflictError(R.map(m => m[0], matches));
   }
 }
 
@@ -117,17 +118,17 @@ export function listMigrations(directory: string): Promise<Migration[]> {
 
 var MIGRATION_SQL_SPLIT_REGEXP = /^-{3,}$/m;
 
-export var SQLMissingError = SuperError.subclass(
-  'SQLMissingError', function(path: string) {
-    this.message = 'SQL section missing in migration file: ' + path;
+export class SQLMissingError extends StandardError {
+  constructor(public path: string) {
+    super('SQL section missing in migration file: ' + path);
   }
-);
+}
 
-export var SQLConflictError = SuperError.subclass(
-  'SQLConflictError', function(path: string) {
-    this.message = 'Too many SQL sections in migration file: ' + path;
+export class SQLConflictError extends StandardError {
+  constructor(public path: string) {
+    super('Too many SQL sections in migration file: ' + path);
   }
-);
+}
 
 function assertSQLSections(migration: Migration, sections: string[]): void {
   if (sections.length < 2) {
