@@ -50,6 +50,10 @@ Apply, Revert:
   -i, --id=                      Run migration by ID
   -t, --to=                      Run migrations until ID
   -n, --number=1                 Run a number of migrations (Revert default)
+
+Other:
+  -h, --help                     Show command line options
+  --version                      Show version
 `;
 
 // TypeScript won't assign the alias literal to
@@ -64,12 +68,13 @@ const OPTIONS: Options = {
   ],
   boolean: [
     'status', 'migrations', 'journal', 'create', 'apply', 'revert', 'long',
-    'combined', 'split', 'all'
+    'combined', 'split', 'all', 'help', 'version'
   ],
   alias: {
     'status': 'S', 'migrations': 'M', 'journal': 'J', 'create': 'C',
     'apply': 'A', 'revert': 'R', 'id': 'i', 'long': 'l', 'combined': 'u',
-    'split': 's', 'method': 'm', 'all': 'a', 'to': 't', 'number': 'n'
+    'split': 's', 'method': 'm', 'all': 'a', 'to': 't', 'number': 'n',
+    'help': 'h'
   }
 };
 
@@ -97,6 +102,8 @@ export function loadArgs(args: string[], defaults = DEFAULTS) {
   if (argv['create']) object.command = 'create';
   if (argv['apply']) object.command = 'apply';
   if (argv['revert']) object.command = 'revert';
+  if (argv['help']) object.command = 'help';
+  if (argv['version']) object.command = 'version';
   let command: any = {};
   object.commands = {[object.command]: command};
 

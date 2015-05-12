@@ -13,7 +13,7 @@ export interface RunnerConfig {
 }
 
 export enum Command {
-  apply, revert, journal, status, migrations, create
+  apply, revert, journal, status, migrations, create, version, help
 }
 
 export interface Config {
