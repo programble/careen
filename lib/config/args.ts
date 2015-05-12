@@ -1,17 +1,20 @@
 'use strict';
 
+import R = require('ramda');
 import minimist = require('minimist');
 
 import DEFAULTS = require('./defaults');
-import {loadObject} from './load';
+import {loadObject, loadFile} from './load';
 
 export const ARGS_DOC =
 `General:
+  -c, --config=careen.js         Load configuration from file
+
   --client=dummy                 Use dummy database client (default)
   --client=sqlite3               Use SQLite3 database client
   --client=postgresql            Use PostgreSQL database client
 
-  --config={}                    Database client configuration
+  --client-config={}             Database client configuration
   --journal-table=schema_journal Migration journal table name
 
   --directory=migrations         Migration file directory
@@ -63,33 +66,40 @@ type Options = {
 };
 const OPTIONS: Options = {
   string: [
-    'client', 'config', 'journal-table', 'directory', 'id', 'template',
-    'up-template', 'down-template', 'method', 'to'
+    'config','client', 'client-config', 'journal-table', 'directory', 'id',
+    'template', 'up-template', 'down-template', 'method', 'to'
   ],
   boolean: [
     'status', 'migrations', 'journal', 'create', 'apply', 'revert', 'long',
     'combined', 'split', 'all', 'help', 'version'
   ],
   alias: {
-    'status': 'S', 'migrations': 'M', 'journal': 'J', 'create': 'C',
-    'apply': 'A', 'revert': 'R', 'id': 'i', 'long': 'l', 'combined': 'u',
-    'split': 's', 'method': 'm', 'all': 'a', 'to': 't', 'number': 'n',
-    'help': 'h'
+    'config': 'c', 'status': 'S', 'migrations': 'M', 'journal': 'J',
+    'create': 'C', 'apply': 'A', 'revert': 'R', 'id': 'i', 'long': 'l',
+    'combined': 'u', 'split': 's', 'method': 'm', 'all': 'a', 'to': 't',
+    'number': 'n', 'help': 'h'
   }
 };
 
 export function loadArgs(args: string[], defaults = DEFAULTS) {
+  let config = R.clone(defaults);
+
   let argv = minimist(args, OPTIONS);
+  if (argv['config']) {
+    let file = argv['config'];
+    if (typeof file === 'string') config = loadFile(file, config);
+  }
+
   let object: any = {};
 
   object.client = {};
   if (argv['client']) object.client.name = argv['client'];
-  if (argv['config']) {
-    let config = argv['config'];
-    if (typeof config === 'string') {
-      object.client.config = JSON.parse(config);
+  if (argv['client-config']) {
+    let clientConfig = argv['client-config'];
+    if (typeof clientConfig === 'string') {
+      object.client.config = JSON.parse(clientConfig);
     } else {
-      object.client.config = config;
+      object.client.config = clientConfig;
     }
   }
   if (argv['journal-table']) object.client.journalTable = argv['journal-table'];
@@ -126,5 +136,5 @@ export function loadArgs(args: string[], defaults = DEFAULTS) {
 
   if (argv['_'].length) command.name = argv['_'].join('-');
 
-  return loadObject(object, defaults);
+  return loadObject(object, config);
 }
