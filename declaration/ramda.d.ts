@@ -1,6 +1,9 @@
 declare module 'ramda' {
   export function always<T>(val: T): (...args: any[]) => T;
 
+  export function any<T>(fn: (item: T) => boolean, list: T[]): boolean;
+  export function any<T>(fn: (item: T) => boolean): (list: T[]) => boolean;
+
   export function assoc<T>(prop: string, val: any, obj: T): T;
   export function assoc<T>(prop: string, val: any): (obj: T) => T;
 
@@ -51,6 +54,9 @@ declare module 'ramda' {
 
   export function prop<T>(name: string, obj: {[s: string]: T}): T;
   export function prop<T>(name: string): (obj: {[s: string]: T}) => T;
+
+  export function props<T>(ps: string[], obj: {[s: string]: T}): T[];
+  export function props<T>(ps: string[]): (obj: {[s: string]: T}) => T[];
 
   export function propEq<T>(name: string, val: T, obj: {[s: string]: T}): boolean;
   export function propEq<T>(name: string, val: T): (obj: {[s: string]: T}) => boolean;
