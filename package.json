@@ -7,9 +7,9 @@
     "build": "tsc",
     "build-test": "tsc -p test",
     "mocha": "mocha",
-    "test": "npm run build && npm run build-test && npm run mocha",
+    "test": "npm run build-test && npm run mocha",
     "istanbul": "istanbul cover node_modules/.bin/_mocha",
-    "coverage": "npm run build && npm run build-test && npm run istanbul",
+    "coverage": "npm run build-test && npm run istanbul",
     "coveralls": "coveralls < coverage/lcov.info",
     "clean": "find lib test -name '*.js' -delete && rm -rf coverage"
   },
