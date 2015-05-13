@@ -159,6 +159,12 @@ export function loadObject(object: any, defaults = DEFAULTS): Config {
       );
       setKey(
         config.commands.apply,
+        ['commands', 'apply', 'pending'],
+        'boolean',
+        apply
+      );
+      setKey(
+        config.commands.apply,
         ['commands', 'apply', 'id'],
         'string',
         apply
@@ -175,19 +181,13 @@ export function loadObject(object: any, defaults = DEFAULTS): Config {
         'number',
         apply
       );
-      setKey(
-        config.commands.apply,
-        ['commands', 'apply', 'all'],
-        'boolean',
-        apply
-      );
 
-      let notAll = [
-        config.commands.apply.id,
-        config.commands.apply.to,
-        config.commands.apply.number
+      let notPending = [
+        apply['id'],
+        apply['to'],
+        apply['number']
       ];
-      if (R.any(R.identity, notAll)) config.commands.apply.all = false;
+      if (R.any(R.identity, notPending)) config.commands.apply.pending = false;
     }
 
     if (commands.hasOwnProperty('revert')) {
@@ -218,19 +218,6 @@ export function loadObject(object: any, defaults = DEFAULTS): Config {
         'number',
         revert
       );
-      setKey(
-        config.commands.revert,
-        ['commands', 'revert', 'all'],
-        'boolean',
-        revert
-      );
-
-      let notAll = [
-        config.commands.revert.id,
-        config.commands.revert.to,
-        config.commands.revert.number
-      ];
-      if (R.any(R.identity, notAll)) config.commands.revert.all = false;
     }
   }
 

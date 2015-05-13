@@ -4,14 +4,6 @@ import client = require('../client/index');
 
 export enum Method { each, all, dry };
 
-export interface RunnerConfig {
-  method: Method;
-  id?: string;
-  to?: string;
-  number?: number;
-  all?: boolean;
-}
-
 export enum Command {
   apply, revert, journal, status, migrations, create, version, help
 }
@@ -54,8 +46,19 @@ export interface Config {
       };
     };
 
-    apply: RunnerConfig;
+    apply: {
+      method: Method;
+      pending: boolean;
+      id?: string;
+      to?: string;
+      number?: number;
+    };
 
-    revert: RunnerConfig;
+    revert: {
+      method: Method;
+      number: number;
+      id?: string;
+      to?: string;
+    };
   };
 }

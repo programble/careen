@@ -41,12 +41,11 @@ const DEFAULTS: structure.Config = {
 
     apply: {
       method: structure.Method.all,
-      all: true
+      pending: true
     },
 
     revert: {
       method: structure.Method.all,
-      all: false,
       number: 1
     }
   }

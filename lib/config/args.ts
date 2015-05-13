@@ -44,15 +44,24 @@ Create:
   --up-template=                 Up template file
   --down-template=               Down template file
 
-Apply, Revert:
-  -m, --method=all               Run all migrations in a transaction (default)
-      --method=each              Run each migration in a transaction
-      --method=dry               Always rollback transaction
+Apply:
+  -a, --all                      Apply all in one transaction (default)
+  -e, --each                     Apply each in a transaction
+  -d, --dry                      Always rollback transaction
 
-  -a, --all                      Run all pending migrations (Apply default)
-  -i, --id=                      Run migration by ID
-  -t, --to=                      Run migrations until ID
-  -n, --number=1                 Run a number of migrations (Revert default)
+  -p, --pending                  Apply all pending migrations (default)
+  -i, --id=                      Apply migration by ID
+  -t, --to=                      Apply migrations until ID
+  -n, --number=                  Apply a number of pending migrations
+
+Revert:
+  -a, --all                      Revert all in one transaction (default)
+  -e, --each                     Revert each in a transaction
+  -d, --dry                      Always rollback transaction
+
+  -n, --number=1                 Revert a number of applied migrations
+  -i, --id=                      Revert migration by ID
+  -t, --to=                      Revert migrations until ID
 
 Other:
   -h, --help                     Show command line options
@@ -67,17 +76,17 @@ type Options = {
 const OPTIONS: Options = {
   string: [
     'config','client', 'client-config', 'journal-table', 'directory', 'id',
-    'template', 'up-template', 'down-template', 'method', 'to'
+    'template', 'up-template', 'down-template', 'to'
   ],
   boolean: [
     'status', 'migrations', 'journal', 'create', 'apply', 'revert', 'long',
-    'combined', 'split', 'all', 'help', 'version'
+    'combined', 'split', 'all', 'each', 'dry', 'pending', 'help', 'version'
   ],
   alias: {
     'config': 'c', 'status': 'S', 'migrations': 'M', 'journal': 'J',
     'create': 'C', 'apply': 'A', 'revert': 'R', 'id': 'i', 'long': 'l',
-    'combined': 'u', 'split': 's', 'method': 'm', 'all': 'a', 'to': 't',
-    'number': 'n', 'help': 'h'
+    'combined': 'u', 'split': 's', 'all': 'a', 'each': 'e', 'dry': 'd',
+    'pending': 'p', 'to': 't', 'number': 'n', 'help': 'h'
   }
 };
 
@@ -129,8 +138,11 @@ export function loadArgs(args: string[], defaults = DEFAULTS) {
   if (argv['up-template']) command.templatePaths.up = argv['up-template'];
   if (argv['down-template']) command.templatePaths.down = argv['down-template'];
 
-  if (argv['method']) command.method = argv['method'];
-  if (argv['all']) command.all = true;
+  if (argv['all']) command.method = 'all';
+  if (argv['each']) command.method = 'each';
+  if (argv['dry']) command.method = 'dry';
+
+  if (argv['pending']) command.pending = true;
   if (argv['to']) command.to = argv['to'];
   if (argv['number']) command.number = argv['number'];
 
