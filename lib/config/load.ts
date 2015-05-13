@@ -23,6 +23,8 @@ function setEnumKey(to: any, keyPath: string[], enumObject: any, from: any): voi
   let key = R.last(keyPath);
   if (!from.hasOwnProperty(key)) return;
 
+  ConfigTypeError.assert(keyPath.join('.'), 'string', from[key]);
+
   let value = enumObject[from[key]];
   if (typeof value === 'undefined') {
     throw new ConfigEnumError(keyPath.join('.'), enumObject, from[key]);
