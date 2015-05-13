@@ -46,6 +46,7 @@ const DEFAULTS: structure.Config = {
 
     revert: {
       method: structure.Method.all,
+      all: false,
       number: 1
     }
   }
