@@ -224,6 +224,12 @@ export function loadObject(object: any, defaults = DEFAULTS): Config {
   return config;
 }
 
+function requirable(path: string) {
+  if (path.indexOf('/') === 0) return path;
+  if (path.indexOf('..') === 0) return path;
+  return './' + path;
+}
+
 export function loadFile(path: string, defaults = DEFAULTS): Config {
-  return loadObject(require(path), defaults);
+  return loadObject(require(requirable(path)), defaults);
 }
