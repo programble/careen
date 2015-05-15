@@ -1,5 +1,7 @@
 'use strict';
 
+import path = require('path');
+
 import R = require('ramda');
 
 import errors = require('./errors');
@@ -224,12 +226,7 @@ export function loadObject(object: any, defaults = DEFAULTS): Config {
   return config;
 }
 
-function requirable(path: string) {
-  if (path.indexOf('/') === 0) return path;
-  if (path.indexOf('..') === 0) return path;
-  return './' + path;
-}
-
-export function loadFile(path: string, defaults = DEFAULTS): Config {
-  return loadObject(require(requirable(path)), defaults);
+export function loadFile(filePath: string, defaults = DEFAULTS): Config {
+  // Always require an absolute path to bypass require search
+  return loadObject(require(path.resolve(filePath)), defaults);
 }
