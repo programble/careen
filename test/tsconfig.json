@@ -10,6 +10,7 @@
     "client/dummy.ts",
     "client/sqlite3.ts",
     "client/postgresql.ts",
+    "config/defaults.ts",
     "config/load-object.ts",
     "config/load-file.ts",
     "files.ts",
