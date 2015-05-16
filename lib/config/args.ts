@@ -1,7 +1,7 @@
 'use strict';
 
 import * as R from 'ramda';
-import minimist = require('minimist');
+import * as minimist from 'minimist';
 
 import DEFAULTS from './defaults';
 import { loadObject, loadFile } from './load';
