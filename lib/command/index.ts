@@ -10,6 +10,11 @@ export { create, help, version };
 
 function commandFunction(config: Config): (config: Config) => Promise<string> {
   switch (config.command) {
+    case Command.apply: return help;
+    case Command.revert: return help;
+    case Command.journal: return help;
+    case Command.status: return help;
+    case Command.migrations: return help;
     case Command.create: return create;
     case Command.help: return help;
     case Command.version: return version;
