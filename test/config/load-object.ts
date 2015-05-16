@@ -260,18 +260,18 @@ describe('Config loadObject', function() {
         );
       });
 
-      describe('idGenerator', function() {
-        it('sets idGenerator', function() {
+      describe('generateID', function() {
+        it('sets generateID', function() {
           let testConfig = config.loadObject({
-            commands: {create: {idGenerator: () => '123'}}
+            commands: {create: {generateID: () => '123'}}
           });
-          assert.equal(testConfig.commands.create.idGenerator(), '123');
+          assert.equal(testConfig.commands.create.generateID(), '123');
         });
 
         describe('with non-function', function() {
           it('throws ConfigTypeError', () =>
             assert.throws(
-              () => config.loadObject({commands: {create: {idGenerator: 'string'}}}),
+              () => config.loadObject({commands: {create: {generateID: 'string'}}}),
               config.ConfigTypeError
             )
           );

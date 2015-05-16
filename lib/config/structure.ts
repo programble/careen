@@ -36,7 +36,7 @@ export interface Config {
     };
 
     create: {
-      idGenerator: () => string;
+      generateID: () => string;
       split: boolean;
       name: string;
       templatePaths: {

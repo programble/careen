@@ -40,7 +40,7 @@ describe('Config loadFile', function() {
           module.exports = {
             commands: {
               create: {
-                idGenerator: function() { return '123'; }
+                generateID: function() { return '123'; }
               }
             }
           }
@@ -50,7 +50,7 @@ describe('Config loadFile', function() {
 
     it('loads configuration', function() {
       let testConfig = config.loadFile('careen.js');
-      assert.equal(testConfig.commands.create.idGenerator(), '123');
+      assert.equal(testConfig.commands.create.generateID(), '123');
     });
 
     describe('with explicit defaults', function() {

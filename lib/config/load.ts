@@ -104,7 +104,7 @@ export function loadObject(object: any, defaults = DEFAULTS): Config {
 
       setKey(
         config.commands.create,
-        ['commands', 'create', 'idGenerator'],
+        ['commands', 'create', 'generateID'],
         'function',
         create
       );

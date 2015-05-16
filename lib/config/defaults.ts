@@ -29,7 +29,7 @@ const DEFAULTS: Config = {
     journal: {},
 
     create: {
-      idGenerator: () => new Date().valueOf().toString(36),
+      generateID: () => new Date().valueOf().toString(36),
       split: false,
       name: 'migration',
       templatePaths: {

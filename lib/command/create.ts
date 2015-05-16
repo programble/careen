@@ -13,7 +13,7 @@ export default function create(config: Config) {
   let directory = config.files.directory;
   let command = config.commands.create;
 
-  let id = command.idGenerator();
+  let id = command.generateID();
 
   let ensureDirectory = files.ensureDirectory(directory);
   let createMigration: Promise<files.Migration>;
@@ -46,5 +46,5 @@ export default function create(config: Config) {
     );
   }
 
-  return createMigration.then(formatMigrationLong)
+  return createMigration.then(formatMigrationLong);
 }
