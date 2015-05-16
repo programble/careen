@@ -18,6 +18,15 @@ describe('Config loadArgs', function() {
     });
   });
 
+  describe('with invalid option', function() {
+    it('throws ConfigOptionError', () =>
+      assert.throws(
+        () => config.loadArgs(['--what']),
+        config.ConfigOptionError
+      )
+    );
+  });
+
   describe('-c, --config', function() {
     before(() => mockFS({'test.json': '{"command":"journal"}'}));
 
@@ -46,18 +55,9 @@ describe('Config loadArgs', function() {
   });
 
   describe('--client-config', function() {
-    describe('with JSON string', function() {
-      it('sets client config', function() {
-        let testConfig = config.loadArgs(['--client-config', '{"foo":"bar"}']);
-        assert.deepEqual(testConfig.client.config, {foo: 'bar'});
-      });
-    });
-
-    describe('as object', function() {
-      it('sets client config', function() {
-        let testConfig = config.loadArgs(['--client-config.foo', 'bar']);
-        assert.deepEqual(testConfig.client.config, {foo: 'bar'});
-      });
+    it('sets client config', function() {
+      let testConfig = config.loadArgs(['--client-config', '{"foo":"bar"}']);
+      assert.deepEqual(testConfig.client.config, {foo: 'bar'});
     });
   });
 

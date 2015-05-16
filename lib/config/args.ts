@@ -5,6 +5,7 @@ import minimist = require('minimist');
 
 import DEFAULTS = require('./defaults');
 import {loadObject, loadFile} from './load';
+import {ConfigOptionError} from './errors';
 
 export const ARGS_DOC =
 `General:
@@ -68,10 +69,19 @@ Other:
   --version                      Show version
 `;
 
+function unknownHandler(arg: string) {
+  // Send non-options to argv._
+  if (arg.indexOf('-') !== 0) return true;
+  throw new ConfigOptionError(arg);
+}
+
 // TypeScript won't assign the alias literal to
 // { [s: string]: string | string[] } without explicit typing.
 type Options = {
-  string: string[]; boolean: string[]; alias: { [s: string]: string };
+  string: string[];
+  boolean: string[];
+  alias: { [s: string]: string };
+  unknown: typeof unknownHandler;
 };
 const OPTIONS: Options = {
   string: [
@@ -87,7 +97,8 @@ const OPTIONS: Options = {
     'create': 'C', 'apply': 'A', 'revert': 'R', 'id': 'i', 'long': 'l',
     'combined': 'u', 'split': 's', 'all': 'a', 'each': 'e', 'dry': 'd',
     'pending': 'p', 'to': 't', 'number': 'n', 'help': 'h'
-  }
+  },
+  unknown: unknownHandler
 };
 
 export function loadArgs(args: string[], defaults = DEFAULTS) {

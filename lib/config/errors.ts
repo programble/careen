@@ -38,3 +38,9 @@ export class ConfigEnumError extends ConfigError {
     super(`Expected ${key} to be one of ${this.expected}; got ${actual}`);
   }
 }
+
+export class ConfigOptionError extends ConfigError {
+  constructor(public option: string) {
+    super(`Unrecognized command line option: ${option}`);
+  }
+}
