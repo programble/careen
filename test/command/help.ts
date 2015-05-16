@@ -3,6 +3,6 @@
 import { DEFAULTS } from '../../lib/config/index';
 import { help } from '../../lib/command/index';
 
-describe('Help command', function() {
+describe('Command help', function() {
   it('succeeds', () => help(DEFAULTS));
 });
