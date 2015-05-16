@@ -9,7 +9,7 @@ import { Config } from '../config/index';
 import * as files from '../files';
 import { formatMigrationLong } from '../format';
 
-export default function create(config: Config): void {
+export default function create(config: Config) {
   let directory = config.files.directory;
   let command = config.commands.create;
 
@@ -46,7 +46,5 @@ export default function create(config: Config): void {
     );
   }
 
-  createMigration
-    .then(formatMigrationLong)
-    .tap(console.log);
+  return createMigration.then(formatMigrationLong)
 }

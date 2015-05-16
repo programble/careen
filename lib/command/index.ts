@@ -8,7 +8,7 @@ import version from './version';
 
 export { create, help, version };
 
-function commandFunction(config: Config): (config: Config) => void {
+function commandFunction(config: Config): (config: Config) => Promise<string> {
   switch (config.command) {
     case Command.create: return create;
     case Command.help: return help;
@@ -16,6 +16,6 @@ function commandFunction(config: Config): (config: Config) => void {
   }
 }
 
-export function run(config: Config): void {
-  commandFunction(config)(config);
+export function run(config: Config) {
+  return commandFunction(config)(config);
 }

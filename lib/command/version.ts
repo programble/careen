@@ -1,8 +1,10 @@
 'use strict';
 
+import * as Promise from 'bluebird';
+
 import { Config } from '../config/index';
 
-export default function version(_: Config): void {
+export default function version(_: Config) {
   let packageJSON = require('../../package.json');
-  console.log(packageJSON.version);
+  return Promise.resolve<string>(packageJSON.version);
 }
