@@ -1,13 +1,13 @@
 'use strict';
 
-import util = require('util');
-import path = require('path');
+import { format } from 'util';
+import * as path from 'path';
 
-import chalk = require('chalk');
+import * as chalk from 'chalk';
 
-import client = require('./client/index');
-import files = require('./files');
-import status = require('./status');
+import { Operation, JournalEntry } from './client/index';
+import { Migration } from './files';
+import { State, MigrationState } from './status';
 
 const colors = {
   apply: chalk.green,
@@ -16,14 +16,14 @@ const colors = {
   missing: chalk.yellow
 };
 
-export function formatOperation(op: client.Operation) {
-  return (op === client.Operation.apply)
+export function formatOperation(operation: Operation) {
+  return (operation === Operation.apply)
     ? colors.apply('apply ')
     : colors.revert('revert');
 }
 
-export function formatJournalEntry(entry: client.JournalEntry) {
-  return util.format(
+export function formatJournalEntry(entry: JournalEntry) {
+  return format(
     '%s %s %s %s\n',
     entry.timestamp.toISOString(),
     formatOperation(entry.operation),
@@ -32,21 +32,21 @@ export function formatJournalEntry(entry: client.JournalEntry) {
   );
 }
 
-export function formatMigration(migration: files.Migration) {
-  return util.format('%s %s\n', migration.id, migration.name);
+export function formatMigration(migration: Migration) {
+  return format('%s %s\n', migration.id, migration.name);
 }
 
-export function formatMigrationLong(migration: files.Migration) {
+export function formatMigrationLong(migration: Migration) {
   let cwd = process.cwd();
   if (migration.split) {
-    return util.format(
+    return format(
       '%s %s\n  %s\n  %s\n',
       migration.id, migration.name,
       path.relative(cwd, migration.upPath),
       path.relative(cwd, migration.downPath)
     );
   } else {
-    return util.format(
+    return format(
       '%s %s\n  %s\n',
       migration.id, migration.name,
       path.relative(cwd, migration.path)
@@ -54,17 +54,17 @@ export function formatMigrationLong(migration: files.Migration) {
   }
 }
 
-export function formatState(state: status.State) {
+export function formatState(state: State) {
   switch (state) {
-    case status.State.pending: return colors.pending('pending ');
-    case status.State.applied: return colors.apply('applied ');
-    case status.State.reverted: return colors.apply('reverted');
-    case status.State.missing: return colors.missing('missing ');
+    case State.pending: return colors.pending('pending ');
+    case State.applied: return colors.apply('applied ');
+    case State.reverted: return colors.apply('reverted');
+    case State.missing: return colors.missing('missing ');
   }
 }
 
-export function formatMigrationState(migrationState: status.MigrationState) {
-  return util.format(
+export function formatMigrationState(migrationState: MigrationState) {
+  return format(
     '%s %s %s\n',
     formatState(migrationState.state),
     migrationState.migrationID,

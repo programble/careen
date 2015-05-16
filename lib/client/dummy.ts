@@ -1,9 +1,9 @@
 'use strict';
 
-import R = require('ramda');
-import Promise = require('bluebird');
+import * as R from 'ramda';
+import * as Promise from 'bluebird';
 
-import client = require('./index');
+import { JournalEntryIn, JournalEntry } from './index';
 
 // Optional defaults for the live dataset.
 export interface Config {
@@ -63,7 +63,7 @@ export function ensureJournal(db: DB, tableName: string) {
   return Promise.resolve();
 }
 
-export function appendJournal(db: DB, tableName: string, entry: client.JournalEntryIn) {
+export function appendJournal(db: DB, tableName: string, entry: JournalEntryIn) {
   let journal = (db.transaction || db.live).tables[tableName];
   journal.push(R.assoc('timestamp', new Date(), entry));
   return Promise.resolve();
@@ -71,7 +71,7 @@ export function appendJournal(db: DB, tableName: string, entry: client.JournalEn
 
 export function readJournal(db: DB, tableName: string) {
   let entries = (db.transaction || db.live).tables[tableName];
-  return Promise.resolve(<client.JournalEntry[]> entries);
+  return Promise.resolve(<JournalEntry[]> entries);
 }
 
 export function runMigrationSQL(db: DB, sql: string) {

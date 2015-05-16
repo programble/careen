@@ -1,6 +1,8 @@
+'use strict';
+
 export * from './structure';
 export * from './errors';
 export * from './load';
 export * from './args';
-import defaults = require('./defaults');
-export const DEFAULTS = defaults;
+import DEFAULTS from './defaults';
+export { DEFAULTS };

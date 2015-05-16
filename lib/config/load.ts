@@ -1,15 +1,12 @@
 'use strict';
 
-import path = require('path');
+import * as path from 'path';
 
-import R = require('ramda');
+import * as R from 'ramda';
 
-import errors = require('./errors');
-import ConfigTypeError = errors.ConfigTypeError;
-import ConfigEnumError = errors.ConfigEnumError;
-import DEFAULTS = require('./defaults');
-import structure = require('./structure');
-import Config = structure.Config;
+import { ConfigTypeError, ConfigEnumError } from './errors';
+import DEFAULTS from './defaults';
+import { Config, Command, Method } from './structure';
 
 function setKey(to: any, keyPath: string[], type: string, from: any): void {
   let key = R.last(keyPath);
@@ -53,7 +50,7 @@ export function loadObject(object: any, defaults = DEFAULTS): Config {
     setKey(config.files, ['files', 'directory'], 'string', object.files);
   }
 
-  setEnumKey(config, ['command'], structure.Command, object);
+  setEnumKey(config, ['command'], Command, object);
 
   if (object.hasOwnProperty('commands')) {
     let commands = object.commands;
@@ -156,7 +153,7 @@ export function loadObject(object: any, defaults = DEFAULTS): Config {
       setEnumKey(
         config.commands.apply,
         ['commands', 'apply', 'method'],
-        structure.Method,
+        Method,
         apply
       );
       setKey(
@@ -199,7 +196,7 @@ export function loadObject(object: any, defaults = DEFAULTS): Config {
       setEnumKey(
         config.commands.revert,
         ['commands', 'revert', 'method'],
-        structure.Method,
+        Method,
         revert
       );
       setKey(

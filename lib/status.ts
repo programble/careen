@@ -1,11 +1,10 @@
 'use strict';
 
-import R = require('ramda');
+import * as R from 'ramda';
 
-import StandardError = require('./standard-error');
-import client = require('./client/index');
-import files = require('./files');
-import runner = require('./runner');
+import StandardError from './standard-error';
+import { JournalEntry, Operation } from './client/index';
+import { Migration } from './files';
 
 export enum State {
   pending,
@@ -27,7 +26,7 @@ export class InvalidJournalOperationError extends StandardError {
 }
 
 export function getMigrationStates(
-  migrations: files.Migration[], journalEntries: client.JournalEntry[]
+  migrations: Migration[], journalEntries: JournalEntry[]
 ): MigrationState[] {
   let migrationIDSet: { [id: string]: boolean } = {};
   let states: { [id: string]: MigrationState } = {};
@@ -48,9 +47,9 @@ export function getMigrationStates(
         migrationName: entry.migrationName,
         state: State.missing
       };
-    } else if (entry.operation === client.Operation.apply) {
+    } else if (entry.operation === Operation.apply) {
       states[entry.migrationID].state = State.applied;
-    } else if (entry.operation === client.Operation.revert) {
+    } else if (entry.operation === Operation.revert) {
       states[entry.migrationID].state = State.reverted;
     } else {
       throw new InvalidJournalOperationError(entry.operation);

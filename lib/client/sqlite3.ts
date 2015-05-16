@@ -1,10 +1,10 @@
 'use strict';
 
-import Promise = require('bluebird');
-import sqlite3 = require('sqlite3');
-Promise.promisifyAll(sqlite3.Database.prototype);
+import * as Promise from 'bluebird';
+import { Database } from 'sqlite3';
+Promise.promisifyAll(Database.prototype);
 
-import client = require('./index');
+import { JournalEntryIn, JournalEntry, Operation } from './index';
 
 export interface Config {
   filename: string
@@ -12,32 +12,32 @@ export interface Config {
 
 export function connect(config: Config) {
   return new Promise(function(
-    resolve: (result: sqlite3.Database) => void,
+    resolve: (result: Database) => void,
     reject: (error: any) => void
   ) {
-    let db = new sqlite3.Database(config.filename);
+    let db = new Database(config.filename);
     db.once('error', reject);
     db.once('open', () => resolve(db));
   });
 }
 
-export function disconnect(db: sqlite3.Database) {
+export function disconnect(db: Database) {
   return db.closeAsync();
 }
 
-export function beginTransaction(db: sqlite3.Database) {
+export function beginTransaction(db: Database) {
   return db.runAsync('BEGIN;');
 }
 
-export function commitTransaction(db: sqlite3.Database) {
+export function commitTransaction(db: Database) {
   return db.runAsync('COMMIT;');
 }
 
-export function rollbackTransaction(db: sqlite3.Database) {
+export function rollbackTransaction(db: Database) {
   return db.runAsync('ROLLBACK;');
 }
 
-export function ensureJournal(db: sqlite3.Database, tableName: string) {
+export function ensureJournal(db: Database, tableName: string) {
   return db.runAsync(`
     CREATE TABLE IF NOT EXISTS ${tableName} (
       timestamp TEXT NOT NULL,
@@ -48,30 +48,30 @@ export function ensureJournal(db: sqlite3.Database, tableName: string) {
   `);
 }
 
-export function appendJournal(db: sqlite3.Database, tableName: string, entry: client.JournalEntryIn) {
+export function appendJournal(db: Database, tableName: string, entry: JournalEntryIn) {
   return db.runAsync(`
     INSERT INTO ${tableName} (timestamp, operation, migration_id, migration_name)
     VALUES (datetime('now'), ?, ?, ?);
   `, [
-    client.Operation[entry.operation],
+    Operation[entry.operation],
     entry.migrationID,
     entry.migrationName
   ]);
 }
 
-export function readJournal(db: sqlite3.Database, tableName: string) {
+export function readJournal(db: Database, tableName: string) {
   return db.allAsync(`SELECT * FROM ${tableName} ORDER BY timestamp;`)
-    .map(function(row: any): client.JournalEntry {
+    .map(function(row: any): JournalEntry {
       return {
         timestamp: new Date(row.timestamp),
         // TypeScript doesn't admit that its enums are indexable.
-        operation: <any> client.Operation[row.operation],
+        operation: <any> Operation[row.operation],
         migrationID: <string> row.migration_id,
         migrationName: <string> row.migration_name
       };
     });
 }
 
-export function runMigrationSQL(db: sqlite3.Database, sql: string) {
+export function runMigrationSQL(db: Database, sql: string) {
   return db.execAsync(sql);
 }

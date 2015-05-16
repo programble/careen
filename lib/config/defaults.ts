@@ -1,12 +1,12 @@
 'use strict';
 
-import path = require('path');
+import * as path from 'path';
 
-import structure = require('./structure');
+import { Config, Command, Method } from './structure';
 
 const TEMPLATE_PATH = path.join(__dirname, '..', '..', 'template');
 
-const DEFAULTS: structure.Config = {
+const DEFAULTS: Config = {
   client: {
     name: 'dummy',
     config: {},
@@ -17,7 +17,7 @@ const DEFAULTS: structure.Config = {
     directory: 'migrations'
   },
 
-  command: structure.Command.status,
+  command: Command.status,
 
   commands: {
     migrations: {
@@ -40,15 +40,15 @@ const DEFAULTS: structure.Config = {
     },
 
     apply: {
-      method: structure.Method.all,
+      method: Method.all,
       pending: true
     },
 
     revert: {
-      method: structure.Method.all,
+      method: Method.all,
       number: 1
     }
   }
 };
 
-export = DEFAULTS;
+export default DEFAULTS;

@@ -1,10 +1,8 @@
 'use strict';
 
-import util = require('util');
+import * as R from 'ramda';
 
-import R = require('ramda');
-
-import StandardError = require('../standard-error');
+import StandardError from '../standard-error';
 
 export class ConfigError extends StandardError {
   key: string;

@@ -1,13 +1,13 @@
 'use strict';
 
-import fs = require('fs');
-import path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
-import R = require('ramda');
-import Promise = require('bluebird');
+import * as R from 'ramda';
+import * as Promise from 'bluebird';
 Promise.promisifyAll(fs);
 
-import StandardError = require('./standard-error');
+import StandardError from './standard-error';
 
 export interface Migration {
   id: string;

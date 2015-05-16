@@ -1,12 +1,14 @@
+'use strict';
+
 // Only exists so that the clients are checked against the Client interface at
 // compile time.
 
-import client = require('./index');
+import { Client } from './index';
 
-import dummyClient = require('./dummy');
-import sqlite3Client = require('./sqlite3');
-import postgresqlClient = require('./postgresql');
+import * as dummyClient from './dummy';
+import * as sqlite3Client from './sqlite3';
+import * as postgresqlClient from './postgresql';
 
-export var dummy: client.Client = dummyClient;
-export var sqlite3: client.Client = sqlite3Client;
-export var postgresql: client.Client = postgresqlClient;
+export const dummy: Client = dummyClient;
+export const sqlite3: Client = sqlite3Client;
+export const postgresql: Client = postgresqlClient;

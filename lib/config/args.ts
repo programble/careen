@@ -1,11 +1,11 @@
 'use strict';
 
-import R = require('ramda');
+import * as R from 'ramda';
 import minimist = require('minimist');
 
-import DEFAULTS = require('./defaults');
-import {loadObject, loadFile} from './load';
-import {ConfigOptionError} from './errors';
+import DEFAULTS from './defaults';
+import { loadObject, loadFile } from './load';
+import { ConfigOptionError } from './errors';
 
 export const ARGS_DOC =
 `General:

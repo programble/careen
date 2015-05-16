@@ -1,6 +1,6 @@
 'use strict';
 
-import client = require('../client/index');
+import * as client from '../client/index';
 
 export enum Method { each, all, dry };
 

@@ -1,21 +1,20 @@
 'use strict';
 
-import Promise = require('bluebird');
+import * as Promise from 'bluebird';
 
-import files = require('./files');
-// To not conflict with client instances.
-import c = require('./client/index');
+import { Migration, readUpSQL, readDownSQL } from './files';
+import { Client, Config, Operation } from './client/index';
 
-function requireClient(name: string): c.Client {
+function requireClient(name: string): Client {
   return require('./client/' + name);
 }
 
-function useConnection(client: c.Client, config: c.Config) {
+function useConnection(client: Client, config: Config) {
   return client.connect(config).disposer(client.disconnect);
 }
 
 export function readJournal(
-  clientName: string, config: c.Config, journalTable: string
+  clientName: string, config: Config, journalTable: string
 ) {
   let client = requireClient(clientName);
   return Promise.using(useConnection(client, config), (db) =>
@@ -25,19 +24,19 @@ export function readJournal(
 }
 
 function eachRunner(
-  operation: c.Operation, readSQL: (migration: files.Migration) => Promise<string>
+  operation: Operation, readSQL: (migration: Migration) => Promise<string>
 ) {
   return function(
     clientName: string,
-    config: c.Config,
+    config: Config,
     journalTable: string,
-    migrations: files.Migration[]
+    migrations: Migration[]
   ) {
     let client = requireClient(clientName);
     return Promise.using(useConnection(client, config), db =>
       client.ensureJournal(db, journalTable)
         .return(migrations)
-        .each((migration: files.Migration) =>
+        .each((migration: Migration) =>
           readSQL(migration).then(sql =>
             client.beginTransaction(db)
               .then(() => client.runMigrationSQL(db, sql))
@@ -55,20 +54,20 @@ function eachRunner(
 }
 
 function allRunner(
-  operation: c.Operation, readSQL: (migration: files.Migration) => Promise<string>
+  operation: Operation, readSQL: (migration: Migration) => Promise<string>
 ) {
   return function(
     clientName: string,
-    config: c.Config,
+    config: Config,
     journalTable: string,
-    migrations: files.Migration[]
+    migrations: Migration[]
   ) {
     let client = requireClient(clientName);
     return Promise.using(useConnection(client, config), db =>
       client.ensureJournal(db, journalTable)
         .then(() => client.beginTransaction(db))
         .return(migrations)
-        .each((migration: files.Migration) =>
+        .each((migration: Migration) =>
           readSQL(migration).then(sql =>
             client.runMigrationSQL(db, sql)
               .then(() => client.appendJournal(db, journalTable, {
@@ -85,20 +84,20 @@ function allRunner(
 }
 
 function dryRunner(
-  operation: c.Operation, readSQL: (migration: files.Migration) => Promise<string>
+  operation: Operation, readSQL: (migration: Migration) => Promise<string>
 ) {
   return function(
     clientName: string,
-    config: c.Config,
+    config: Config,
     journalTable: string,
-    migrations: files.Migration[]
+    migrations: Migration[]
   ) {
     let client = requireClient(clientName);
     return Promise.using(useConnection(client, config), db =>
       client.ensureJournal(db, journalTable)
         .then(() => client.beginTransaction(db))
         .return(migrations)
-        .each((migration: files.Migration) =>
+        .each((migration: Migration) =>
           readSQL(migration).then(sql =>
             client.runMigrationSQL(db, sql)
               .then(() => client.appendJournal(db, journalTable, {
@@ -118,54 +117,54 @@ function dryRunner(
 
 export function applyEach(
   clientName: string,
-  config: c.Config,
+  config: Config,
   journalTable: string,
-  migrations: files.Migration[]
+  migrations: Migration[]
 ) {
-  return eachRunner(c.Operation.apply, files.readUpSQL).apply(null, arguments);
+  return eachRunner(Operation.apply, readUpSQL).apply(null, arguments);
 }
 
 export function applyAll(
   clientName: string,
-  config: c.Config,
+  config: Config,
   journalTable: string,
-  migrations: files.Migration[]
+  migrations: Migration[]
 ) {
-  return allRunner(c.Operation.apply, files.readUpSQL).apply(null, arguments);
+  return allRunner(Operation.apply, readUpSQL).apply(null, arguments);
 }
 
 export function applyDry(
   clientName: string,
-  config: c.Config,
+  config: Config,
   journalTable: string,
-  migrations: files.Migration[]
+  migrations: Migration[]
 ) {
-  return dryRunner(c.Operation.apply, files.readUpSQL).apply(null, arguments);
+  return dryRunner(Operation.apply, readUpSQL).apply(null, arguments);
 }
 
 export function revertEach(
   clientName: string,
-  config: c.Config,
+  config: Config,
   journalTable: string,
-  migrations: files.Migration[]
+  migrations: Migration[]
 ) {
-  return eachRunner(c.Operation.revert, files.readDownSQL).apply(null, arguments);
+  return eachRunner(Operation.revert, readDownSQL).apply(null, arguments);
 }
 
 export function revertAll(
   clientName: string,
-  config: c.Config,
+  config: Config,
   journalTable: string,
-  migrations: files.Migration[]
+  migrations: Migration[]
 ) {
-  return allRunner(c.Operation.revert, files.readDownSQL).apply(null, arguments);
+  return allRunner(Operation.revert, readDownSQL).apply(null, arguments);
 }
 
 export function revertDry(
   clientName: string,
-  config: c.Config,
+  config: Config,
   journalTable: string,
-  migrations: files.Migration[]
+  migrations: Migration[]
 ) {
-  return dryRunner(c.Operation.revert, files.readDownSQL).apply(null, arguments);
+  return dryRunner(Operation.revert, readDownSQL).apply(null, arguments);
 }

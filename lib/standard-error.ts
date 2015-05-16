@@ -1,8 +1,8 @@
 'use strict';
 
-import util = require('util');
+import { inherits } from 'util';
 
-class StandardError implements Error {
+export default class StandardError implements Error {
   name: string;
   message: string;
   stack: string;
@@ -13,6 +13,4 @@ class StandardError implements Error {
     (<any> Error).captureStackTrace(this, this.constructor);
   }
 }
-util.inherits(StandardError, Error);
-
-export = StandardError;
+inherits(StandardError, Error);

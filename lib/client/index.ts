@@ -1,6 +1,6 @@
 'use strict';
 
-import Promise = require('bluebird');
+import * as Promise from 'bluebird';
 
 // Configuration required to establish a database connection.
 export interface Config {}
