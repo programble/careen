@@ -5,6 +5,7 @@
     "noImplicitAny": true
   },
   "files": [
+    "bin/_careen.ts",
     "declaration/index.d.ts",
     "lib/index.ts",
     "lib/client/all.ts"

@@ -59,6 +59,13 @@ declare class Promise<T> implements Promise.Thenable<T> {
     handler: (a: V, b: W) => U
   ): Promise<U>;
 
+  static join<U, V, W, X>(
+    a: Promise.Thenable<V>,
+    b: Promise.Thenable<W>,
+    c: Promise.Thenable<X>,
+    handler: (a: V, b: W, c: X) => Promise.Thenable<U>
+  ): Promise<U>;
+
   static promisify<U>(
     nodeFunction: (callback: (err: any, result: U) => void) => void,
     receiver?: any
