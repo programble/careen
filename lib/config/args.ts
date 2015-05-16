@@ -118,8 +118,6 @@ export function loadArgs(args: string[], defaults = DEFAULTS) {
     let clientConfig = argv['client-config'];
     if (typeof clientConfig === 'string') {
       object.client.config = JSON.parse(clientConfig);
-    } else {
-      object.client.config = clientConfig;
     }
   }
   if (argv['journal-table']) object.client.journalTable = argv['journal-table'];
