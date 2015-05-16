@@ -1,9 +1,9 @@
 'use strict';
 
-import Promise = require('bluebird');
+import * as Promise from 'bluebird';
 
-import suite = require('./suite');
-import dummy = require('../../lib/client/dummy');
+import suite from './suite';
+import * as dummy from '../../lib/client/dummy';
 
 suite<typeof dummy, dummy.Config>({
   prettyName: 'Dummy',

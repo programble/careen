@@ -1,10 +1,10 @@
 'use strict';
 
-import assert = require('assert');
+import * as assert from 'assert';
 
-import mockFS = require('mock-fs');
+import * as mockFS from 'mock-fs';
 
-import config = require('../../lib/config/index');
+import * as config from '../../lib/config/index';
 
 describe('Config loadArgs', function() {
   describe('with explicit defaults', function() {

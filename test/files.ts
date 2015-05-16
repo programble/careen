@@ -1,15 +1,15 @@
 'use strict';
 
-import fs = require('fs');
-import path = require('path');
-import assert = require('assert');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as assert from 'assert';
 
-import R = require('ramda');
-import Promise = require('bluebird');
+import * as R from 'ramda';
+import * as Promise from 'bluebird';
 Promise.promisifyAll(fs);
-import mockFS = require('mock-fs');
+import * as mockFS from 'mock-fs';
 
-import files = require('../lib/files');
+import * as files from '../lib/files';
 
 describe('Files', function() {
   describe('ensureDirectory', function() {

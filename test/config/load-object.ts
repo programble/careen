@@ -1,8 +1,8 @@
 'use strict';
 
-import assert = require('assert');
+import * as assert from 'assert';
 
-import config = require('../../lib/config/index');
+import * as config from '../../lib/config/index';
 
 describe('Config loadObject', function() {
   describe('with empty object', function() {

@@ -1,11 +1,11 @@
 'use strict';
 
-import assert = require('assert');
+import * as assert from 'assert';
 
-import R = require('ramda');
-import Promise = require('bluebird');
+import * as R from 'ramda';
+import * as Promise from 'bluebird';
 
-import client = require('../../lib/client/index');
+import * as client from '../../lib/client/index';
 
 interface Suite<T extends client.Client, U extends client.Config> {
   prettyName: string;
@@ -15,7 +15,10 @@ interface Suite<T extends client.Client, U extends client.Config> {
   dropDatabase: (config: U) => Promise<any>;
 }
 
-function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>) {
+export default function suite<
+  T extends client.Client,
+  U extends client.Config
+>(t: Suite<T, U>) {
   let config: U;
   let db: client.Connection;
 
@@ -306,5 +309,3 @@ function suite<T extends client.Client, U extends client.Config>(t: Suite<T, U>)
     });
   });
 }
-
-export = suite;

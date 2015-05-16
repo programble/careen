@@ -1,21 +1,21 @@
 'use strict';
 
-import assert = require('assert');
+import * as assert from 'assert';
 
-import config = require('../../lib/config/index');
+import { DEFAULTS } from '../../lib/config/index';
 
 describe('Config defaults', function() {
   describe('commands create idGenerator', function() {
-    it('succeeds', () => config.DEFAULTS.commands.create.idGenerator());
+    it('succeeds', () => DEFAULTS.commands.create.idGenerator());
 
     describe('multiple calls', function() {
       let firstID: string;
       let secondID: string;
 
       before(function(done) {
-        firstID = config.DEFAULTS.commands.create.idGenerator();
+        firstID = DEFAULTS.commands.create.idGenerator();
         setTimeout(function() {
-          secondID = config.DEFAULTS.commands.create.idGenerator();
+          secondID = DEFAULTS.commands.create.idGenerator();
           done();
         }, 5);
       });

@@ -1,12 +1,12 @@
 'use strict';
 
-import childProcess = require('child_process');
+import { exec as execNode } from 'child_process';
 
-import Promise = require('bluebird');
-let exec = Promise.promisify(childProcess.exec);
+import * as Promise from 'bluebird';
+let exec = Promise.promisify(execNode);
 
-import suite = require('./suite');
-import postgresql = require('../../lib/client/postgresql');
+import suite from './suite';
+import * as postgresql from '../../lib/client/postgresql';
 
 let databaseID = 1;
 

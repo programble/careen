@@ -1,9 +1,9 @@
 'use strict';
 
-import Promise = require('bluebird');
+import * as Promise from 'bluebird';
 
-import suite = require('./suite');
-import sqlite3 = require('../../lib/client/sqlite3');
+import suite from './suite';
+import * as sqlite3 from '../../lib/client/sqlite3';
 
 suite<typeof sqlite3, sqlite3.Config>({
   prettyName: 'SQLite3',

@@ -1,16 +1,16 @@
 'use strict';
 
-import assert = require('assert');
+import * as assert from 'assert';
 
-import R = require('ramda');
-import Promise = require('bluebird');
-import sinon = require('sinon');
-import mockFS = require('mock-fs');
+import * as R from 'ramda';
+import * as Promise from 'bluebird';
+import * as sinon from 'sinon';
+import * as mockFS from 'mock-fs';
 
-import files = require('../lib/files');
-import client = require('../lib/client/index');
-import dummy = require('../lib/client/dummy');
-import runner = require('../lib/runner');
+import * as files from '../lib/files';
+import * as client from '../lib/client/index';
+import * as dummy from '../lib/client/dummy';
+import * as runner from '../lib/runner';
 
 const migrationFiles = {
   success3: {

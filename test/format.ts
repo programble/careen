@@ -1,10 +1,10 @@
 'use strict';
 
-import assert = require('assert');
+import * as assert from 'assert';
 
-import client = require('../lib/client/index');
-import status = require('../lib/status');
-import f = require('../lib/format');
+import * as client from '../lib/client/index';
+import * as status from '../lib/status';
+import * as f from '../lib/format';
 
 describe('Format', function() {
   describe('formatOperation', function() {

@@ -1,9 +1,9 @@
 'use strict';
 
-import assert = require('assert');
+import * as assert from 'assert';
 
-import client = require('../lib/client/index');
-import status = require('../lib/status');
+import * as client from '../lib/client/index';
+import * as status from '../lib/status';
 
 const migration = {
   id: '1',
