@@ -29,6 +29,9 @@ declare module 'ramda' {
   export function is(ctor: Function, val: any): boolean;
   export function is(ctor: Function): (val: any) => boolean;
 
+  export function join(separator: string, xs: string[]): string;
+  export function join(separator: string): (xs: string[]) => string;
+
   export function keys(obj: Object): string[];
 
   export function last<T>(list: T[]): T;
