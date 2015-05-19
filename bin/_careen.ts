@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import { DEFAULTS, loadFile, loadArgs } from '../lib/config/index';
 import { run } from '../lib/command/index';
 
-export default function main(argv: string[]): void {
+export default function main(argv: string[]) {
   let fileConfig = DEFAULTS;
 
   if (fs.existsSync('careen.js')) {
@@ -16,5 +16,9 @@ export default function main(argv: string[]): void {
 
   let argsConfig = loadArgs(argv.slice(2), fileConfig);
 
-  run(argsConfig).tap(console.log);
+  return run(argsConfig).tap(console.log);
+}
+
+if (require.main === module) {
+  main(process.argv);
 }
