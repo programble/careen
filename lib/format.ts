@@ -58,7 +58,7 @@ export function formatState(state: State) {
   switch (state) {
     case State.pending: return colors.pending('pending ');
     case State.applied: return colors.apply('applied ');
-    case State.reverted: return colors.apply('reverted');
+    case State.reverted: return colors.revert('reverted');
     case State.missing: return colors.missing('missing ');
   }
 }
