@@ -2,6 +2,7 @@
 
 import { Config, Command } from '../config/index';
 
+import status from './status';
 import migrations from './migrations';
 import create from './create';
 import help from './help';
@@ -14,7 +15,7 @@ function commandFunction(config: Config): (config: Config) => Promise<string> {
     case Command.apply: return help;
     case Command.revert: return help;
     case Command.journal: return help;
-    case Command.status: return help;
+    case Command.status: return status;
     case Command.migrations: return migrations;
     case Command.create: return create;
     case Command.help: return help;
