@@ -1,91 +1,101 @@
 declare module 'ramda' {
-  export function always<T>(val: T): (...args: any[]) => T;
+   function always<T>(val: T): (...args: any[]) => T;
 
-  export function any<T>(fn: (item: T) => boolean, list: T[]): boolean;
-  export function any<T>(fn: (item: T) => boolean): (list: T[]) => boolean;
+   function any<T>(fn: (item: T) => boolean, list: T[]): boolean;
+   function any<T>(fn: (item: T) => boolean): (list: T[]) => boolean;
 
-  export function assoc<T>(prop: string, val: any, obj: T): T;
-  export function assoc<T>(prop: string, val: any): (obj: T) => T;
+   function assoc<T>(prop: string, val: any, obj: T): T;
+   function assoc<T>(prop: string, val: any): (obj: T) => T;
 
-  export function clone<T>(value: T): T;
+   function clone<T>(value: T): T;
 
-  export function filter<T>(fn: (item: T) => boolean, list: T[]): T[];
-  export function filter<T>(fn: (item: T) => boolean): (list: T[]) => T[];
+   function contains<T>(a: T, list: T[]): boolean;
 
-  export function find<T>(fn: (item: T) => boolean, list: T[]): T;
-  export function find<T>(fn: (item: T) => boolean): (list: T[]) => T;
+   function filter<T>(fn: (item: T) => boolean, list: T[]): T[];
+   function filter<T>(fn: (item: T) => boolean): (list: T[]) => T[];
 
-  export function forEach<T>(fn: (item: T) => void, list: T[]): T[];
-  export function forEach<T>(fn: (item: T) => void): (list: T[]) => T[];
+   function find<T>(fn: (item: T) => boolean, list: T[]): T;
+   function find<T>(fn: (item: T) => boolean): (list: T[]) => T;
 
-  export function groupBy<T>(fn: (item: T) => string, list: T[]): {[s: string]: T[]};
-  export function groupBy<T>(fn: (item: T) => string): (list: T[]) => {[s: string]: T[]};
+   function forEach<T>(fn: (item: T) => void, list: T[]): T[];
+   function forEach<T>(fn: (item: T) => void): (list: T[]) => T[];
 
-  export function has(prop: string, obj: {[s: string]: any}): boolean;
-  export function has(prop: string): (obj: {[s: string]: any}) => boolean;
+   function groupBy<T>(fn: (item: T) => string, list: T[]): {[s: string]: T[]};
+   function groupBy<T>(fn: (item: T) => string): (list: T[]) => {[s: string]: T[]};
 
-  export function identity<T>(x: T): T;
+   function has(prop: string, obj: {[s: string]: any}): boolean;
+   function has(prop: string): (obj: {[s: string]: any}) => boolean;
 
-  export function is(ctor: Function, val: any): boolean;
-  export function is(ctor: Function): (val: any) => boolean;
+   function identity<T>(x: T): T;
 
-  export function join(separator: string, xs: string[]): string;
-  export function join(separator: string): (xs: string[]) => string;
+   function is(ctor: Function, val: any): boolean;
+   function is(ctor: Function): (val: any) => boolean;
 
-  export function keys(obj: Object): string[];
+   function join(separator: string, xs: string[]): string;
+   function join(separator: string): (xs: string[]) => string;
 
-  export function last<T>(list: T[]): T;
+   function keys(obj: Object): string[];
 
-  export function match(rx: RegExp, str: string): RegExpMatchArray;
-  export function match(rx: RegExp): (str: string) => RegExpMatchArray;
+   function last<T>(list: T[]): T;
 
-  export function map<T, U>(fn: (item: T) => U, list: T[]): U[];
-  export function map<T, U>(fn: (item: T) => U): (list: T[]) => U[];
+   function match(rx: RegExp, str: string): RegExpMatchArray;
+   function match(rx: RegExp): (str: string) => RegExpMatchArray;
 
-  export function mapObj<T, U>(fn: (item: T) => U, obj: {[s: string]: T}): {[s: string]: U};
-  export function mapObj<T, U>(fn: (item: T) => U): (obj: {[s: string]: T}) => {[s: string]: U};
+   function map<T, U>(fn: (item: T) => U, list: T[]): U[];
+   function map<T, U>(fn: (item: T) => U): (list: T[]) => U[];
 
-  export function nth<T>(index: number, list: T[]): T;
-  export function nth<T>(index: number): (list: T[]) => T;
+   function mapObj<T, U>(fn: (item: T) => U, obj: {[s: string]: T}): {[s: string]: U};
+   function mapObj<T, U>(fn: (item: T) => U): (obj: {[s: string]: T}) => {[s: string]: U};
 
-  export function partial<A, Z>(fn: (a: A) => Z, a: A): () => Z;
-  export function partial<A, B, Z>(fn: (a: A, b: B) => Z, a: A): (b: B) => Z;
-  export function partial<A, B, Z>(fn: (a: A, b: B) => Z, a: A, b: B): () => Z;
-  export function partial<A, B, C, Z>(fn: (a: A, b: B, c: C) => Z, a: A): (b: B, c: C) => Z;
-  export function partial<A, B, C, Z>(fn: (a: A, b: B, c: C) => Z, a: A, b: B): (c: C) => Z;
-  export function partial<A, B, C, Z>(fn: (a: A, b: B, c: C) => Z, a: A, b: B, c: C): () => Z;
+   function nth<T>(index: number, list: T[]): T;
+   function nth<T>(index: number): (list: T[]) => T;
 
-  export function prop<T>(name: string, obj: {[s: string]: T}): T;
-  export function prop<T>(name: string): (obj: {[s: string]: T}) => T;
+   function partial<A, Z>(fn: (a: A) => Z, a: A): () => Z;
+   function partial<A, B, Z>(fn: (a: A, b: B) => Z, a: A): (b: B) => Z;
+   function partial<A, B, Z>(fn: (a: A, b: B) => Z, a: A, b: B): () => Z;
+   function partial<A, B, C, Z>(fn: (a: A, b: B, c: C) => Z, a: A): (b: B, c: C) => Z;
+   function partial<A, B, C, Z>(fn: (a: A, b: B, c: C) => Z, a: A, b: B): (c: C) => Z;
+   function partial<A, B, C, Z>(fn: (a: A, b: B, c: C) => Z, a: A, b: B, c: C): () => Z;
 
-  export function props<T>(ps: string[], obj: {[s: string]: T}): T[];
-  export function props<T>(ps: string[]): (obj: {[s: string]: T}) => T[];
+   function prop<T>(name: string, obj: {[s: string]: T}): T;
+   function prop<T>(name: string): (obj: {[s: string]: T}) => T;
 
-  export function propEq<T>(name: string, val: T, obj: {[s: string]: T}): boolean;
-  export function propEq<T>(name: string, val: T): (obj: {[s: string]: T}) => boolean;
-  export function propEq<T>(index: number, val: T, list: T[]): boolean;
-  export function propEq<T>(index: number, val: T): (list: T[]) => boolean;
+   function props<T>(ps: string[], obj: {[s: string]: T}): T[];
+   function props<T>(ps: string[]): (obj: {[s: string]: T}) => T[];
 
-  export function reduce<T, U>(fn: (acc: T, value: U) => T, acc: T, list: U[]): T;
-  export function reduce<T, U>(fn: (acc: T, value: U) => T, acc: T): (list: U[]) => T;
-  export function reduce<T, U>(fn: (acc: T, value: U) => T): (acc: T, list: U[]) => T;
+   function propEq<T>(name: string, val: T, obj: {[s: string]: T}): boolean;
+   function propEq<T>(name: string, val: T): (obj: {[s: string]: T}) => boolean;
+   function propEq<T>(index: number, val: T, list: T[]): boolean;
+   function propEq<T>(index: number, val: T): (list: T[]) => boolean;
 
-  export function sortBy<T>(fn: (item: T) => string, list: T[]): T[];
-  export function sortBy<T>(fn: (item: T) => string): (list: T[]) => T[];
+   function reduce<T, U>(fn: (acc: T, value: U) => T, acc: T, list: U[]): T;
+   function reduce<T, U>(fn: (acc: T, value: U) => T, acc: T): (list: U[]) => T;
+   function reduce<T, U>(fn: (acc: T, value: U) => T): (acc: T, list: U[]) => T;
 
-  export function split(sep: string | RegExp, str: string): string[];
-  export function split(sep: string | RegExp): (str: string) => string[];
+   function reject<T>(fn: (item: T) => boolean, list: T[]): T[];
+   function reject<T>(fn: (item: T) => boolean): (list: T[]) => T[];
 
-  export function times<T>(fn: (i: number) => T, n: number): T[];
-  export function times<T>(fn: (i: number) => T): (n: number) => T[];
+   function reverse<T>(list: T[]): T[];
 
-  export function trim(str: string): string;
+   function sortBy<T>(fn: (item: T) => string, list: T[]): T[];
+   function sortBy<T>(fn: (item: T) => string): (list: T[]) => T[];
 
-  export function values<T>(obj: {[s: string]: T}): T[];
+   function split(sep: string | RegExp, str: string): string[];
+   function split(sep: string | RegExp): (str: string) => string[];
 
-  export function zipObj<T>(keys: string[], values: T[]): {[s: string]: T};
-  export function zipObj<T>(keys: string[]): (values: T[]) => {[s: string]: T};
+   function take<T>(n: number, list: T[]): T[];
+   function take<T>(n: number): (list: T[]) => T[];
 
-  export function F(): boolean;
-  export function T(): boolean;
+   function times<T>(fn: (i: number) => T, n: number): T[];
+   function times<T>(fn: (i: number) => T): (n: number) => T[];
+
+   function trim(str: string): string;
+
+   function values<T>(obj: {[s: string]: T}): T[];
+
+   function zipObj<T>(keys: string[], values: T[]): {[s: string]: T};
+   function zipObj<T>(keys: string[]): (values: T[]) => {[s: string]: T};
+
+   function F(): boolean;
+   function T(): boolean;
 }
