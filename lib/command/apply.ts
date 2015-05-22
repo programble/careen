@@ -6,12 +6,8 @@ import * as Promise from 'bluebird';
 import { Config, Method } from '../config/index';
 import { listMigrations } from '../files';
 import { readJournal, applyEach, applyAll, applyDry } from '../runner';
-import { MigrationState, State, getMigrationStates } from '../status';
+import { getMigrationStates, isApplicable } from '../status';
 import { formatMigrationState } from '../format';
-
-let filterApplicable = R.filter<MigrationState>(s =>
-  s.state === State.pending || s.state === State.reverted
-);
 
 function applyFunction(method: Method) {
   switch (method) {
@@ -30,7 +26,7 @@ export default function apply(config: Config) {
   let states = Promise.join(migrations, journal, getMigrationStates)
 
   let applicableIDs = states
-    .then(filterApplicable)
+    .then(R.filter(isApplicable))
     .then(ss => R.map(s => s.migrationID, ss));
   let toApplyIDs: Promise<string[]>;
 

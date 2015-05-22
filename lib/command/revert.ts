@@ -6,7 +6,7 @@ import * as Promise from 'bluebird';
 import { Config, Method } from '../config/index';
 import { listMigrations } from '../files';
 import { readJournal, revertEach, revertAll, revertDry } from '../runner';
-import { MigrationState, State, getMigrationStates } from '../status';
+import { getMigrationStates, isRevertable } from '../status';
 import { formatMigrationState } from '../format';
 
 function revertFunction(method: Method) {
@@ -26,7 +26,7 @@ export default function revert(config: Config) {
   let states = Promise.join(migrations, journal, getMigrationStates);
 
   let revertableIDs = states
-    .then(ss => R.filter(s => s.state === State.applied, ss))
+    .then(R.filter(isRevertable))
     .then(ss => R.map(s => s.migrationID, ss));
   let toRevertIDs: Promise<string[]>;
 
