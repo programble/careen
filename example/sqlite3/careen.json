@@ -1,0 +1,6 @@
+{
+  "client": {
+    "name": "sqlite3",
+    "config": {"filename": "example.sqlite"}
+  }
+}

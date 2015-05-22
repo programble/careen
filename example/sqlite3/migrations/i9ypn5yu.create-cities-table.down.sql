@@ -1,0 +1,3 @@
+-- down
+
+DROP TABLE cities;
