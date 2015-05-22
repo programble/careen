@@ -12,6 +12,7 @@
     "client/sqlite3.ts",
     "command/create.ts",
     "command/help.ts",
+    "command/migrations.ts",
     "command/run.ts",
     "command/version.ts",
     "config/defaults.ts",
