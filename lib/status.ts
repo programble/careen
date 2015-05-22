@@ -19,6 +19,14 @@ export interface MigrationState {
   state: State;
 }
 
+export function isApplicable(state: MigrationState) {
+  return state.state === State.pending || state.state === State.reverted;
+}
+
+export function isRevertable(state: MigrationState) {
+  return state.state === State.applied;
+}
+
 export class InvalidJournalOperationError extends StandardError {
   constructor(public operation: any) {
     super(`Invalid journal entry operation: ${operation}`);

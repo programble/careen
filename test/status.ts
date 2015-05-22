@@ -34,6 +34,26 @@ const journalEntries = {
 };
 
 describe('Status', function() {
+  describe('isApplicable', function() {
+    it('succeeds', () =>
+      status.isApplicable({
+        migrationID: '123',
+        migrationName: 'test',
+        state: status.State.pending
+      })
+    );
+  });
+
+  describe('isRevertable', function() {
+    it('succeeds', () =>
+      status.isRevertable({
+        migrationID: '123',
+        migrationName: 'test',
+        state: status.State.applied
+      })
+    );
+  });
+
   describe('getMigrationStates', function() {
     describe('with nothing', function() {
       it('returns empty array', () =>
