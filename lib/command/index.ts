@@ -11,7 +11,7 @@ import create from './create';
 import help from './help';
 import version from './version';
 
-export { create, help, version };
+export { apply, revert, journal, status, migrations, create, help, version };
 
 function commandFunction(config: Config): (config: Config) => Promise<string> {
   switch (config.command) {
