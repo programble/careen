@@ -15,6 +15,7 @@
     "command/journal.ts",
     "command/migrations.ts",
     "command/run.ts",
+    "command/status.ts",
     "command/version.ts",
     "config/defaults.ts",
     "config/load-args.ts",
