@@ -7,11 +7,50 @@ import * as sinon from 'sinon';
 
 import { loadObject } from '../../lib/config/index';
 import * as command from '../../lib/command/index';
+import * as status from '../../lib/command/status';
+import * as journal from '../../lib/command/journal';
+import * as migrations from '../../lib/command/migrations';
 import * as create from '../../lib/command/create';
 import * as help from '../../lib/command/help';
 import * as version from '../../lib/command/version';
 
 describe('Command run', function() {
+  describe('status', function() {
+    let stub: sinon.Stub;
+    before(() => stub = sinon.stub(status, 'default').returns(Promise.resolve('')));
+
+    it('calls status', function() {
+      command.run(loadObject({command: 'status'}));
+      assert.equal(stub.callCount, 1);
+    });
+
+    after(() => stub.restore());
+  });
+
+  describe('journal', function() {
+    let stub: sinon.Stub;
+    before(() => stub = sinon.stub(journal, 'default').returns(Promise.resolve('')));
+
+    it('calls journal', function() {
+      command.run(loadObject({command: 'journal'}));
+      assert.equal(stub.callCount, 1);
+    });
+
+    after(() => stub.restore());
+  });
+
+  describe('migrations', function() {
+    let stub: sinon.Stub;
+    before(() => stub = sinon.stub(migrations, 'default').returns(Promise.resolve('')));
+
+    it('calls migrations', function() {
+      command.run(loadObject({command: 'migrations'}));
+      assert.equal(stub.callCount, 1);
+    });
+
+    after(() => stub.restore());
+  });
+
   describe('create', function() {
     let stub: sinon.Stub;
     before(() => stub = sinon.stub(create, 'default').returns(Promise.resolve('')));
