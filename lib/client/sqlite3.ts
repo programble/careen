@@ -63,7 +63,8 @@ export function readJournal(db: Database, tableName: string) {
   return db.allAsync(`SELECT * FROM ${tableName} ORDER BY timestamp;`)
     .map(function(row: any): JournalEntry {
       return {
-        timestamp: new Date(row.timestamp),
+        // Make sure JavaScript knows the timestamp is in UTC.
+        timestamp: new Date(row.timestamp + '+00:00'),
         // TypeScript doesn't admit that its enums are indexable.
         operation: <any> Operation[row.operation],
         migrationID: <string> row.migration_id,
