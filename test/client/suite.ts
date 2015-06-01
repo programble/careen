@@ -250,6 +250,38 @@ export default function suite<
         after(hooks.disconnect);
         after(hooks.dropDatabase);
       });
+
+      describe('timestamps', function() {
+        before(hooks.createDatabase);
+        before(hooks.connect);
+        before(hooks.ensureJournal);
+
+        let expectedTS: number;
+
+        before(function() {
+          expectedTS = new Date().valueOf();
+          return t.client.appendJournal(db, 'journal', {
+            operation: client.Operation.apply,
+            migrationID: '1',
+            migrationName: 'test'
+          });
+        });
+
+        let entry: client.JournalEntry;
+
+        it('succeeds', () =>
+          t.client.readJournal(db, 'journal').tap(es => entry = es[0])
+        );
+
+        it('returns timestamp within 1 second', function() {
+          let ts = entry.timestamp.valueOf();
+          let delta = Math.abs(ts - expectedTS);
+          assert(delta < 1000);
+        });
+
+        after(hooks.disconnect);
+        after(hooks.dropDatabase);
+      });
     });
 
     describe('runMigrationSQL', function() {
