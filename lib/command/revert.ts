@@ -7,7 +7,7 @@ import { Config, Method } from '../config/index';
 import { listMigrations } from '../files';
 import { readJournal, revertEach, revertAll, revertDry } from '../runner';
 import { getMigrationStates, isRevertable } from '../status';
-import { formatMigrationState } from '../format';
+import { formatJournalEntry } from '../format';
 
 function revertFunction(method: Method) {
   switch (method) {
@@ -50,15 +50,12 @@ export default function revert(config: Config) {
     )
   );
 
-  let finalJournal = revert.then(() =>
-    readJournal(client.name, client.config, client.journalTable)
-  );
-  let finalStates = Promise.join(migrations, finalJournal, getMigrationStates);
-  let revertableStates = Promise.join(finalStates, revertableIDs, (ss, ids) =>
-    R.filter(s => R.contains(s.migrationID, ids), ss)
+  let previousEntry = journal.then(es => R.last(es));
+  let newEntries = Promise.join(previousEntry, revert, (prev, es) =>
+    R.filter(e => e.timestamp > prev.timestamp, es)
   );
 
-  return revertableStates
-    .then(R.map(formatMigrationState))
+  return newEntries
+    .then(R.map(formatJournalEntry))
     .then(R.join(''));
 }
