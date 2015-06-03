@@ -49,6 +49,7 @@ function eachRunner(
               .then(() => client.commitTransaction(db))
           )
         )
+        .then(() => client.readJournal(db, journalTable))
     );
   };
 }
@@ -79,6 +80,7 @@ function allRunner(
         )
         .catch(error => client.rollbackTransaction(db).throw(error))
         .then(() => client.commitTransaction(db))
+        .then(() => client.readJournal(db, journalTable))
     );
   };
 }
@@ -108,6 +110,7 @@ function dryRunner(
           )
         )
         .finally(() => client.rollbackTransaction(db))
+        .then(() => client.readJournal(db, journalTable))
     );
   };
 }
