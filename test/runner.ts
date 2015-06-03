@@ -109,6 +109,9 @@ describe('Runner', function() {
       it('calls commitTransaction for each', () =>
         assert.equal(spies.commitTransaction.callCount, 3)
       );
+      it('calls readJournal', () =>
+        assert.equal(spies.readJournal.callCount, 1)
+      );
       it('calls disconnect', () =>
         assert.equal(spies.disconnect.callCount, 1)
       );
@@ -200,6 +203,9 @@ describe('Runner', function() {
       );
       it('calls commitTransaction', () =>
         assert.equal(spies.commitTransaction.callCount, 1)
+      );
+      it('calls readJournal', () =>
+        assert.equal(spies.readJournal.callCount, 1)
       );
       it('calls disconnect', () =>
         assert.equal(spies.disconnect.callCount, 1)
@@ -296,6 +302,9 @@ describe('Runner', function() {
       it('calls rollbackTransaction', () =>
         assert.equal(spies.rollbackTransaction.callCount, 1)
       );
+      it('calls readJournal', () =>
+        assert.equal(spies.readJournal.callCount, 1)
+      );
       it('calls disconnect', () =>
         assert.equal(spies.disconnect.callCount, 1)
       );
@@ -388,6 +397,9 @@ describe('Runner', function() {
       it('calls commitTransaction for each', () =>
         assert.equal(spies.commitTransaction.callCount, 3)
       );
+      it('calls readJournal', () =>
+        assert.equal(spies.readJournal.callCount, 1)
+      );
       it('calls disconnect', () =>
         assert.equal(spies.disconnect.callCount, 1)
       );
@@ -479,6 +491,9 @@ describe('Runner', function() {
       );
       it('calls commitTransaction', () =>
         assert.equal(spies.commitTransaction.callCount, 1)
+      );
+      it('calls readJournal', () =>
+        assert.equal(spies.readJournal.callCount, 1)
       );
       it('calls disconnect', () =>
         assert.equal(spies.disconnect.callCount, 1)
@@ -574,6 +589,9 @@ describe('Runner', function() {
       );
       it('calls rollbackTransaction', () =>
         assert.equal(spies.rollbackTransaction.callCount, 1)
+      );
+      it('calls readJournal', () =>
+        assert.equal(spies.readJournal.callCount, 1)
       );
       it('calls disconnect', () =>
         assert.equal(spies.disconnect.callCount, 1)
