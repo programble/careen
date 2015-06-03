@@ -4,6 +4,7 @@
   "description": "SQL schema migration. Nothing more. Nothing less.",
   "main": "index.js",
   "scripts": {
+    "prepublish": "npm run build",
     "build": "tsc",
     "build-test": "tsc -p test",
     "mocha": "mocha",
