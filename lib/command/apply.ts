@@ -7,7 +7,7 @@ import { Config, Method } from '../config/index';
 import { listMigrations } from '../files';
 import { readJournal, applyEach, applyAll, applyDry } from '../runner';
 import { getMigrationStates, isApplicable } from '../status';
-import { formatMigrationState } from '../format';
+import { formatJournalEntry } from '../format';
 
 function applyFunction(method: Method) {
   switch (method) {
@@ -52,15 +52,12 @@ export default function apply(config: Config) {
     )
   );
 
-  let finalJournal = apply.then(() =>
-    readJournal(client.name, client.config, client.journalTable)
-  );
-  let finalStates = Promise.join(migrations, finalJournal, getMigrationStates);
-  let applicableStates = Promise.join(finalStates, applicableIDs, (ss, ids) =>
-    R.filter(s => R.contains(s.migrationID, ids), ss)
+  let previousEntry = journal.then(es => R.last(es));
+  let newEntries = Promise.join(previousEntry, apply, (prev, es) =>
+    R.filter(e => e.timestamp > prev.timestamp, es)
   );
 
-  return applicableStates
-    .then(R.map(formatMigrationState))
+  return newEntries
+    .then(R.map(formatJournalEntry))
     .then(R.join(''));
 }
