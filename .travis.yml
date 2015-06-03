@@ -3,5 +3,7 @@ node_js:
   - "0.10"
   - "0.12"
   - iojs-v1
-  - iojs-v2
+  - iojs-v2.1
+  # Tests broken due to https://github.com/tschaub/mock-fs/issues/43
+  # - iojs-v2.2
 script: npm run coverage && (npm run coveralls || true)
