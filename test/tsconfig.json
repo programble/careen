@@ -15,6 +15,7 @@
     "command/help.ts",
     "command/journal.ts",
     "command/migrations.ts",
+    "command/revert.ts",
     "command/run.ts",
     "command/status.ts",
     "command/version.ts",
