@@ -23,7 +23,7 @@ function migrationToEntry(migration: files.Migration): JournalEntry {
   };
 }
 
-describe('Command apply', function() {
+describe('Command apply', () => {
   let listMigrationsStub: sinon.Stub;
   let readJournalStub: sinon.Stub;
   let getMigrationStatesSpy: sinon.Spy;
@@ -32,7 +32,7 @@ describe('Command apply', function() {
   let applyDryStub: sinon.Stub;
   let formatSpy: sinon.Spy;
 
-  before(function() {
+  before(() => {
     listMigrationsStub = sinon.stub(files, 'listMigrations', () =>
       Promise.resolve<files.Migration[]>([
         {
@@ -81,7 +81,7 @@ describe('Command apply', function() {
     formatSpy = sinon.spy(format, 'formatJournalEntry');
   });
 
-  after(function() {
+  after(() => {
     listMigrationsStub.restore();
     readJournalStub.restore();
     getMigrationStatesSpy.restore();
@@ -91,7 +91,7 @@ describe('Command apply', function() {
     formatSpy.restore()
   });
 
-  let resetSpies = function() {
+  let resetSpies = () => {
     listMigrationsStub.reset();
     readJournalStub.reset();
     getMigrationStatesSpy.reset();
@@ -101,17 +101,11 @@ describe('Command apply', function() {
     formatSpy.reset()
   };
 
-  describe('pending', function() {
-    describe('all', function() {
-      let config: Config;
-
-      before(() =>
-        config = loadObject({
-          commands: {apply: {method: 'all', pending: true}}
-        })
+  describe('pending', () => {
+    describe('all', () => {
+      it('succeeds', () =>
+        apply(loadObject({commands: {apply: {method: 'all', pending: true}}}))
       );
-
-      it('succeeds', () => apply(config));
 
       it('calls listMigrations', () =>
         assert.equal(listMigrationsStub.callCount, 1)
@@ -123,7 +117,7 @@ describe('Command apply', function() {
         assert.equal(getMigrationStatesSpy.callCount, 1)
       );
 
-      it('calls applyAll with pending migrations', function() {
+      it('calls applyAll with pending migrations', () => {
         assert.equal(applyAllStub.callCount, 1);
 
         let migrations = applyAllStub.firstCall.args[3];
@@ -137,18 +131,12 @@ describe('Command apply', function() {
       );
     });
 
-    describe('each', function() {
+    describe('each', () => {
       before(resetSpies);
 
-      let config: Config;
-
-      before(() =>
-        config = loadObject({
-          commands: {apply: {method: 'each', pending: true}}
-        })
+      it('succeeds', () =>
+        apply(loadObject({commands: {apply: {method: 'each', pending: true}}}))
       );
-
-      it('succeeds', () => apply(config));
 
       it('calls listMigrations', () =>
         assert.equal(listMigrationsStub.callCount, 1)
@@ -160,7 +148,7 @@ describe('Command apply', function() {
         assert.equal(getMigrationStatesSpy.callCount, 1)
       );
 
-      it('calls applyEach with pending migrations', function() {
+      it('calls applyEach with pending migrations', () => {
         assert.equal(applyEachStub.callCount, 1);
 
         let migrations = applyEachStub.firstCall.args[3];
@@ -174,18 +162,12 @@ describe('Command apply', function() {
       );
     });
 
-    describe('dry', function() {
+    describe('dry', () => {
       before(resetSpies);
 
-      let config: Config;
-
-      before(() =>
-        config = loadObject({
-          commands: {apply: {method: 'dry', pending: true}}
-        })
+      it('succeeds', () =>
+        apply(loadObject({commands: {apply: {method: 'dry', pending: true}}}))
       );
-
-      it('succeeds', () => apply(config));
 
       it('calls listMigrations', () =>
         assert.equal(listMigrationsStub.callCount, 1)
@@ -197,7 +179,7 @@ describe('Command apply', function() {
         assert.equal(getMigrationStatesSpy.callCount, 1)
       );
 
-      it('calls applyDry with pending migrations', function() {
+      it('calls applyDry with pending migrations', () => {
         assert.equal(applyDryStub.callCount, 1);
 
         let migrations = applyDryStub.firstCall.args[3];
@@ -212,14 +194,12 @@ describe('Command apply', function() {
     });
   });
 
-  describe('migration ID', function() {
+  describe('migration ID', () => {
     before(resetSpies);
 
-    let config: Config;
-
-    before(() => config = loadObject({commands: {apply: {id: '2'}}}));
-
-    it('succeeds', () => apply(config));
+    it('succeeds', () =>
+      apply(loadObject({commands: {apply: {id: '2'}}}))
+    );
 
     it('calls listMigrations', () =>
       assert.equal(listMigrationsStub.callCount, 1)
@@ -231,7 +211,7 @@ describe('Command apply', function() {
       assert.equal(getMigrationStatesSpy.callCount, 1)
     );
 
-    it('calls applyAll with migration', function() {
+    it('calls applyAll with migration', () => {
       assert.equal(applyAllStub.callCount, 1);
 
       let migrations = applyAllStub.firstCall.args[3];
@@ -244,14 +224,12 @@ describe('Command apply', function() {
     );
   });
 
-  describe('to', function() {
+  describe('to', () => {
     before(resetSpies);
 
-    let config: Config;
-
-    before(() => config = loadObject({commands: {apply: {to: '3'}}}));
-
-    it('succeeds', () => apply(config));
+    it('succeeds', () =>
+      apply(loadObject({commands: {apply: {to: '3'}}}))
+    );
 
     it('calls listMigrations', () =>
       assert.equal(listMigrationsStub.callCount, 1)
@@ -263,7 +241,7 @@ describe('Command apply', function() {
       assert.equal(getMigrationStatesSpy.callCount, 1)
     );
 
-    it('calls applyAll with migrations', function() {
+    it('calls applyAll with migrations', () => {
       assert.equal(applyAllStub.callCount, 1);
 
       let migrations = applyAllStub.firstCall.args[3];
@@ -277,14 +255,12 @@ describe('Command apply', function() {
     );
   });
 
-  describe('number', function() {
+  describe('number', () => {
     before(resetSpies);
 
-    let config: Config;
-
-    before(() => config = loadObject({commands: {apply: {number: 1}}}));
-
-    it('succeeds', () => apply(config));
+    it('succeeds', () =>
+      apply(loadObject({commands: {apply: {number: 1}}}))
+    );
 
     it('calls listMigrations', () =>
       assert.equal(listMigrationsStub.callCount, 1)
@@ -296,7 +272,7 @@ describe('Command apply', function() {
       assert.equal(getMigrationStatesSpy.callCount, 1)
     );
 
-    it('calls applyAll with migrations', function() {
+    it('calls applyAll with migrations', () => {
       assert.equal(applyAllStub.callCount, 1);
 
       let migrations = applyAllStub.firstCall.args[3];
