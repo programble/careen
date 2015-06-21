@@ -39,11 +39,11 @@ describe('Command run', () => {
     });
   });
 
-  describe('status', function() {
+  describe('status', () => {
     let stub: sinon.Stub;
     before(() => stub = sinon.stub(status, 'default').returns(Promise.resolve('')));
 
-    it('calls status', function() {
+    it('calls status', () => {
       command.run(loadObject({command: 'status'}));
       assert.equal(stub.callCount, 1);
     });
@@ -51,11 +51,11 @@ describe('Command run', () => {
     after(() => stub.restore());
   });
 
-  describe('journal', function() {
+  describe('journal', () => {
     let stub: sinon.Stub;
     before(() => stub = sinon.stub(journal, 'default').returns(Promise.resolve('')));
 
-    it('calls journal', function() {
+    it('calls journal', () => {
       command.run(loadObject({command: 'journal'}));
       assert.equal(stub.callCount, 1);
     });
@@ -63,11 +63,11 @@ describe('Command run', () => {
     after(() => stub.restore());
   });
 
-  describe('migrations', function() {
+  describe('migrations', () => {
     let stub: sinon.Stub;
     before(() => stub = sinon.stub(migrations, 'default').returns(Promise.resolve('')));
 
-    it('calls migrations', function() {
+    it('calls migrations', () => {
       command.run(loadObject({command: 'migrations'}));
       assert.equal(stub.callCount, 1);
     });
@@ -75,11 +75,11 @@ describe('Command run', () => {
     after(() => stub.restore());
   });
 
-  describe('create', function() {
+  describe('create', () => {
     let stub: sinon.Stub;
     before(() => stub = sinon.stub(create, 'default').returns(Promise.resolve('')));
 
-    it('calls create', function() {
+    it('calls create', () => {
       command.run(loadObject({command: 'create'}));
       assert.equal(stub.callCount, 1);
     });
@@ -87,11 +87,11 @@ describe('Command run', () => {
     after(() => stub.restore());
   });
 
-  describe('help', function() {
+  describe('help', () => {
     let stub: sinon.Stub;
     before(() => stub = sinon.stub(help, 'default').returns(Promise.resolve('')));
 
-    it('calls help', function() {
+    it('calls help', () => {
       command.run(loadObject({command: 'help'}));
       assert.equal(stub.callCount, 1);
     });
@@ -99,11 +99,11 @@ describe('Command run', () => {
     after(() => stub.restore());
   });
 
-  describe('version', function() {
+  describe('version', () => {
     let stub: sinon.Stub;
     before(() => stub = sinon.stub(version, 'default').returns(Promise.resolve('')));
 
-    it('calls version', function() {
+    it('calls version', () => {
       command.run(loadObject({command: 'version'}));
       assert.equal(stub.callCount, 1);
     });
