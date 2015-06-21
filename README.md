@@ -27,6 +27,9 @@ Careen reads configuration from either `careen.js` or `careen.json` in the
 directory it is run from. All options can be specified in JSON except the
 migration ID generation function.
 
+An alternate configuration file can be specified with the `--config` or `-c`
+option.
+
 ### Client
 
 - `client`:
@@ -188,6 +191,16 @@ List all available migrations.
 To list the paths of each migration's files, pass the `--long` or `-l` option.
 
 To list a single migration, pass the `--id` or `-i` option.
+
+## Example
+
+The `example/sqlite3` directory contains a sample Careen configuration, SQLite3
+database and migration files.
+
+## Advanced Configuration
+
+The default command and default options for all commands can be configured. See
+`lib/config/structure.ts` and `lib/config/defaults.ts`.
 
 ---
 
