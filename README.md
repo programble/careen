@@ -106,7 +106,8 @@ DROP TABLE people;
 The other supported type is "split" migration files, where the up and down SQL
 are each in separate files ending in `.up.sql` and `.down.sql`, respectively.
 
-To create split migration files, pass the `--split` or `-s` option.
+To create combined migration files, pass the `--combined` or `-u` option. To
+create split migration files, pass the `--split` or `-s` option.
 
 Migrations are created by copying template files, which can be specified with
 the `--template`, `--up-template`, `--down-template` options.
