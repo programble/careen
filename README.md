@@ -1,5 +1,6 @@
 # Careen
 
+[![npm Version](https://img.shields.io/npm/v/careen.svg)](https://www.npmjs.com/package/careen)
 [![Build Status](https://img.shields.io/travis/programble/careen/typescript.svg)](https://travis-ci.org/programble/careen)
 [![Coverage Status](https://img.shields.io/coveralls/programble/careen.svg?style=flat)](https://coveralls.io/r/programble/careen?branch=master)
 
