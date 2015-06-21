@@ -7,6 +7,8 @@ import * as sinon from 'sinon';
 
 import { loadObject } from '../../lib/config/index';
 import * as command from '../../lib/command/index';
+import * as apply from '../../lib/command/apply';
+import * as revert from '../../lib/command/revert';
 import * as status from '../../lib/command/status';
 import * as journal from '../../lib/command/journal';
 import * as migrations from '../../lib/command/migrations';
@@ -14,7 +16,29 @@ import * as create from '../../lib/command/create';
 import * as help from '../../lib/command/help';
 import * as version from '../../lib/command/version';
 
-describe('Command run', function() {
+describe('Command run', () => {
+  describe('apply', () => {
+    let stub: sinon.Stub;
+    before(() => stub = sinon.stub(apply, 'default').returns(Promise.resolve('')));
+
+    it('calls apply', () => {
+      command.run(loadObject({command: 'apply'}));
+      assert.equal(stub.callCount, 1);
+    });
+
+    after(() => stub.restore());
+  });
+
+  describe('revert', () => {
+    let stub: sinon.Stub;
+    before(() => stub = sinon.stub(revert, 'default').returns(Promise.resolve('')));
+
+    it('calls revert', () => {
+      command.run(loadObject({command: 'revert'}));
+      assert.equal(stub.callCount, 1);
+    });
+  });
+
   describe('status', function() {
     let stub: sinon.Stub;
     before(() => stub = sinon.stub(status, 'default').returns(Promise.resolve('')));
