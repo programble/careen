@@ -9,6 +9,9 @@ declare module 'ramda' {
 
    function clone<T>(value: T): T;
 
+   function concat<T>(list1: T[], list2: T[]): T[];
+   function concat<T>(list1: T[]): (list2: T[]) => T[];
+
    function contains<T>(a: T, list: T[]): boolean;
 
    function filter<T>(fn: (item: T) => boolean, list: T[]): T[];

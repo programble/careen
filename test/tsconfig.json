@@ -10,6 +10,7 @@
     "client/dummy.ts",
     "client/postgresql.ts",
     "client/sqlite3.ts",
+    "command/apply.ts",
     "command/create.ts",
     "command/help.ts",
     "command/journal.ts",
