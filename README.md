@@ -21,11 +21,13 @@ npm install sqlite
 npm install pg
 ```
 
-## Client Configuration
+## Configuration
 
 Careen reads configuration from either `careen.js` or `careen.json` in the
 directory it is run from. All options can be specified in JSON except the
 migration ID generation function.
+
+### Client
 
 - `client`:
   - `name`: Name of the database client to use.
@@ -33,7 +35,7 @@ migration ID generation function.
   - `journalTable`: Name of the table to write migration journal to. Default
     `schema_journal`.
 
-### SQLite3 Example
+#### SQLite3 Example
 
 ```json
 {
@@ -47,7 +49,7 @@ migration ID generation function.
 }
 ```
 
-### PostgreSQL Example
+#### PostgreSQL Example
 
 ```json
 {
@@ -65,6 +67,20 @@ Alternatively, see [node-postgres][pg-config] for all configuration options.
 
 [pg-config]: https://github.com/brianc/node-postgres/wiki/Client#new-clientobject-config--client
 
+### Files
+
+- `files`:
+  - `directory`: Directory containing migration SQL files. Default
+    `migrations`.
+
+```json
+{
+  "files": {
+    "directory": "migrations"
+  }
+}
+```
+
 ## Commands
 
 ### Create
@@ -73,8 +89,7 @@ Alternatively, see [node-postgres][pg-config] for all configuration options.
 careen -C my-first-migration
 ```
 
-Create a new migration. By default, the migration file or files are created in
-the `migrations` directory. An ID based on the current time will be prepended
+Create a new migration. An ID based on the current time will be prepended
 to the migration name, and the appropriate extension will be appended.
 
 Careen supports two types of migration files which can be used in unison. The
