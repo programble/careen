@@ -1,8 +1,11 @@
 {
   "name": "careen",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "SQL schema migration. Nothing more. Nothing less.",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "bin": {
+    "careen": "bin/careen.js"
+  },
   "scripts": {
     "prepublish": "npm run build",
     "build": "tsc",
