@@ -54,7 +54,7 @@ export default function apply(config: Config) {
 
   let previousEntry = journal.then(es => R.last(es));
   let newEntries = Promise.join(previousEntry, apply, (prev, es) =>
-    R.filter(e => e.timestamp > prev.timestamp, es)
+    prev ? R.filter(e => e.timestamp > prev.timestamp, es) : apply
   );
 
   return newEntries

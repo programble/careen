@@ -284,4 +284,31 @@ describe('Command apply', () => {
       assert.equal(formatSpy.callCount, 1)
     );
   });
+
+  describe('with empty journal', () => {
+    before(resetSpies);
+
+    before(() => {
+      readJournalStub.restore();
+      readJournalStub = sinon.stub(runner, 'readJournal', () =>
+        Promise.resolve([])
+      );
+
+      applyAllStub.restore();
+      applyAllStub = sinon.stub(
+        runner,
+        'applyAll',
+        (n: string, c: Config, j: string, ms: files.Migration[]) =>
+          Promise.resolve(R.map(migrationToEntry, ms))
+      );
+    });
+
+    it('succeeds', () =>
+      apply(loadObject({commands: {apply: {pending: true}}}))
+    );
+
+    it('calls formatJournalEntry for new entries', () =>
+      assert.equal(formatSpy.callCount, 3)
+    );
+  });
 });
